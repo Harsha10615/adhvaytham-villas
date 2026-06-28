@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Street Level Map & Master Layout | Adhvaytham Villas</title>
+    <meta name="description" content="Explore the interactive master layout and street level map of Adhvaytham Villas. Search and filter through all 120 luxury residences.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Shared Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body style="background-color: #0d1216;">
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <button class="hamburger-btn" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="../index.html" class="logo">Adhvaytham <span>Villas</span></a>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <span class="sidebar-close">&times;</span>
+            <a href="../index.html" class="sidebar-logo">Adhvaytham <span>Villas</span></a>
+        </div>
+        <nav class="sidebar-links">
+            <a href="../index.html">Home</a>
+            <a href="about.html">About</a>
+            <div class="sidebar-dropdown">
+                <button class="dropdown-btn">Master Layout <i class="fas fa-chevron-down dropdown-arrow"></i></button>
+                <div class="dropdown-container">
+                    <a href="street-level-map.html">Street Level Map</a>
+                    <a href="street-level-map.html?view=master-plan">Master Plan</a>
+                    <a href="street-level-map.html?filter=all">All 120 Villas</a>
+                    <a href="street-level-map.html?filter=available">Available Villas</a>
+                    <a href="street-level-map.html?filter=occupied">Occupied Villas</a>
+                    <a href="street-level-map.html?filter=construction">Under Construction Villas</a>
+                    <a href="street-level-map.html?filter=sold">Sold Villas</a>
+                </div>
+            </div>
+            <a href="villas.html#availability">Availability</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="location.html">Location</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <a href="contact.html" class="btn btn-primary btn-full btn-sm">Schedule Site Visit</a>
+        </div>
+    </aside>
+
+    <!-- Breadcrumbs Banner -->
+    <section class="breadcrumbs-banner">
+        <div class="container breadcrumbs-content">
+            <h1>Township Master Layout</h1>
+            <div class="breadcrumb-path">
+                <a href="../index.html">Home</a><span>/</span>Master Layout
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Map Section -->
+    <section class="section-padding bg-dark" style="background-color: #0d1216;">
+        <div class="container">
+            
+            <!-- Map Legend -->
+            <div class="map-legend">
+                <div class="legend-item"><span class="status-dot occupied"></span> Occupied (46)</div>
+                <div class="legend-item"><span class="status-dot available"></span> Available (24)</div>
+                <div class="legend-item"><span class="status-dot construction"></span> Under Construction (35)</div>
+                <div class="legend-item"><span class="status-dot sold"></span> Sold Out (15)</div>
+            </div>
+
+            <!-- Toolbar Controls -->
+            <div class="map-toolbar">
+                <!-- Search -->
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="villaSearch" placeholder="Search Villa (e.g. 045, 112)...">
+                </div>
+
+                <!-- Status Filter Tabs -->
+                <div class="filter-tabs-wrapper">
+                    <button class="filter-tab active" data-filter="all">All Villas</button>
+                    <button class="filter-tab" data-filter="occupied"><span class="status-dot occupied"></span> Occupied</button>
+                    <button class="filter-tab" data-filter="available"><span class="status-dot available"></span> Available</button>
+                    <button class="filter-tab" data-filter="construction"><span class="status-dot construction"></span> Under Construction</button>
+                    <button class="filter-tab" data-filter="sold"><span class="status-dot sold"></span> Sold</button>
+                </div>
+
+                <!-- Map Action Controls -->
+                <div class="control-buttons">
+                    <!-- Zoom Controls -->
+                    <button class="map-control-btn" id="zoomIn" title="Zoom In"><i class="fas fa-plus"></i></button>
+                    <button class="map-control-btn" id="zoomOut" title="Zoom Out"><i class="fas fa-minus"></i></button>
+                    <button class="map-control-btn" id="zoomReset" title="Reset Scale"><i class="fas fa-arrows-to-eye"></i></button>
+                    
+                    <!-- View Mode Toggle -->
+                    <div class="view-toggle">
+                        <button class="view-toggle-btn active" id="btnMapView"><i class="fas fa-map"></i> Map</button>
+                        <button class="view-toggle-btn" id="btnListView"><i class="fas fa-list"></i> Cards</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- View 1: Master Plan Visual View (Optional tab view) -->
+            <div id="masterPlanGraphicView" class="master-plan-view" style="display: none; margin-bottom: 30px;">
+                <h3 style="font-family: 'Playfair Display', serif; margin-bottom: 20px; font-size: 24px; color: var(--primary);">Township Master Plan</h3>
+                <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Township Site Plan Drawing" class="master-plan-graphic">
+                <p style="margin-top: 15px; color: #a0aec0; text-align: center; max-width: 600px; font-size: 14px;">This layout maps out all 120 residences of the Adhvaytham enclave. Walk through the completed phases (1st to 8th streets) or explore the upcoming segments (9th to 12th streets).</p>
+            </div>
+
+            <!-- View 2: Interactive Panning Street Level Map -->
+            <div class="map-wrapper-outer" id="mapWrapper">
+                <div class="map-zoom-container" id="mapZoomArea">
+                    <!-- 12 Streets will be generated dynamically here -->
+                </div>
+            </div>
+
+            <!-- View 3: List/Grid View (Hidden by default) -->
+            <div class="list-view-container" id="listViewContainer" style="display: none;">
+                <!-- Cards will be generated dynamically here -->
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Side popover details drawer -->
+    <div class="map-popover" id="mapPopover">
+        <div class="popover-header">
+            <h3 id="popoverTitle">Villa 000</h3>
+            <span class="popover-close" id="popoverClose">&times;</span>
+        </div>
+        <div class="popover-body">
+            <div class="popover-section text-center">
+                <img id="popoverImg" src="" alt="Villa Plan Preview" style="width: 100%; height: 180px; object-fit: cover; border: 1px solid #324559; margin-bottom: 15px;">
+                <span id="popoverStatusBadge" class="badge">Status</span>
+            </div>
+            
+            <div class="popover-section">
+                <h4 style="font-size: 16px; margin-bottom: 12px; color: var(--primary);">Villa Specifications</h4>
+                <ul class="popover-specs-list">
+                    <li><span>Floor Plan:</span> <span id="popoverType">-</span></li>
+                    <li><span>Plot Size:</span> <span id="popoverSize">-</span></li>
+                    <li><span>Availability:</span> <span id="popoverAvailability">-</span></li>
+                    <li><span>Price Guide:</span> <span id="popoverPrice">-</span></li>
+                </ul>
+            </div>
+
+            <div class="popover-section" style="margin-top: auto;">
+                <a id="popoverDetailBtn" href="#" class="btn btn-primary btn-full btn-sm" style="margin-bottom: 10px;">View Full Details</a>
+                <a id="popoverEnquireBtn" href="contact.html" class="btn btn-outline btn-full btn-sm" style="border-color: #324559;">Schedule Site Tour</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3 class="logo">Adhvaytham<span>.</span></h3>
+                    <p>A premium gated villa community of 120 luxury residences. Built with high structural integrity and active social spaces, offering families a reliable, lifetime investment.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="villas.html">Villa Configs</a></li>
+                        <li><a href="amenities.html">Amenities</a></li>
+                        <li><a href="progress.html">Construction Progress</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="gallery.html">Photo Gallery</a></li>
+                        <li><a href="location.html">Location Advantages</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to receive construction updates, floor plan launches, and phase announcements.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Adhvaytham Villas. Developed by Adhvaytham Projects Group. All Rights Reserved. RERA Registered.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919876543210" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Shared Javascript helper -->
+    <script src="../assets/js/script.js"></script>
+
+    <!-- Map Script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // 1. Generate the 120 villas data model
+            const villas = [];
+            
+            // Image mapping for sizes / styles
+            const imageMap = {
+                "2bhk": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "3bhk-exec": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "3bhk-prem": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "4bhk-sig": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "4bhk-grand": "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            };
+
+            for (let i = 1; i <= 120; i++) {
+                const id = String(i).padStart(3, '0');
+                let config, type, size, price, status, availability, img;
+                
+                if (i <= 20) {
+                    config = "2bhk";
+                    type = "2BHK Residential";
+                    size = "1,500 Sq. Ft.";
+                    price = "₹ 1.25 Cr";
+                    status = (i % 5 === 0) ? "sold" : "occupied";
+                    img = imageMap["2bhk"];
+                } else if (i <= 50) {
+                    config = "3bhk";
+                    type = "3BHK Executive";
+                    size = "2,250 Sq. Ft.";
+                    price = "₹ 1.85 Cr";
+                    if (i === 21 || i === 26 || i === 31 || i === 36 || i === 41 || i === 46) status = "available";
+                    else if (i === 25 || i === 30 || i === 35 || i === 40) status = "sold";
+                    else status = "occupied";
+                    img = imageMap["3bhk-exec"];
+                } else if (i <= 80) {
+                    config = "3bhk";
+                    type = "3BHK Premium";
+                    size = "2,400 Sq. Ft.";
+                    price = "₹ 1.78 Cr";
+                    if (i === 55 || i === 60 || i === 65 || i === 70 || i === 75) status = "sold";
+                    else if ([51, 53, 57, 59, 61, 63, 67, 69, 71, 73].includes(i)) status = "available";
+                    else status = "construction";
+                    img = imageMap["3bhk-prem"];
+                } else if (i <= 100) {
+                    config = "4bhk";
+                    type = "4BHK Signature";
+                    size = "3,500 Sq. Ft.";
+                    price = "₹ 2.95 Cr";
+                    if (i === 85 || i === 95) status = "sold";
+                    else if ([81, 83, 87, 89, 91, 93, 97, 99].includes(i)) status = "available";
+                    else status = "occupied";
+                    img = imageMap["4bhk-sig"];
+                } else {
+                    config = "4bhk";
+                    type = "4BHK Grand Estate";
+                    size = "4,100 Sq. Ft.";
+                    price = "₹ 3.40 Cr";
+                    status = "construction";
+                    img = imageMap["4bhk-grand"];
+                }
+
+                if (status === "occupied") availability = "Families Residing";
+                else if (status === "available") {
+                    availability = (type.includes("Premium") || type.includes("Grand")) ? "Booking Open" : "Ready to Move";
+                } else if (status === "construction") availability = "Under Construction";
+                else if (status === "sold") availability = "Sold Out";
+
+                villas.push({ id, config, type, size, price, status, availability, img });
+            }
+
+            // 2. Render Street Map View
+            const mapZoomArea = document.getElementById('mapZoomArea');
+            const listViewContainer = document.getElementById('listViewContainer');
+            const mapWrapper = document.getElementById('mapWrapper');
+            let zoomScale = 1.0;
+            
+            const streetNames = ["1st", "2nd", "3rd", "4th", "5th", "6th", "7th", "8th", "9th", "10th", "11th", "12th"];
+            
+            function renderMap() {
+                mapZoomArea.innerHTML = '';
+                for (let s = 0; s < 12; s++) {
+                    const streetNum = s + 1;
+                    const streetSec = document.createElement('div');
+                    streetSec.className = 'street-section';
+                    
+                    const upperRow = document.createElement('div');
+                    upperRow.className = 'street-row-upper';
+                    
+                    const roadMarker = document.createElement('div');
+                    roadMarker.className = 'street-road-marker';
+                    roadMarker.innerHTML = `<div class="road-center-line"></div><div class="street-name-label">${streetNames[s]} Street</div>`;
+                    
+                    const lowerRow = document.createElement('div');
+                    lowerRow.className = 'street-row-lower';
+                    
+                    // Street range: upper has 5, lower has 5
+                    // e.g. Street 1: upper=1-5, lower=6-10
+                    const baseIndex = s * 10;
+                    
+                    // Upper Row (Villas 1-5 of this street)
+                    for (let u = 0; u < 5; u++) {
+                        const villa = villas[baseIndex + u];
+                        upperRow.appendChild(createVillaCard(villa));
+                    }
+                    
+                    // Lower Row (Villas 6-10 of this street)
+                    for (let l = 5; l < 10; l++) {
+                        const villa = villas[baseIndex + l];
+                        lowerRow.appendChild(createVillaCard(villa));
+                    }
+                    
+                    streetSec.appendChild(upperRow);
+                    streetSec.appendChild(roadMarker);
+                    streetSec.appendChild(lowerRow);
+                    mapZoomArea.appendChild(streetSec);
+                }
+            }
+
+            function createVillaCard(villa) {
+                const card = document.createElement('div');
+                card.className = `map-villa-card status-${villa.status}`;
+                card.setAttribute('data-id', villa.id);
+                card.setAttribute('data-status', villa.status);
+                
+                card.innerHTML = `
+                    <div class="villa-card-header">
+                        <div class="villa-card-number">Villa ${villa.id}</div>
+                        <div class="villa-card-status-badge ${villa.status}">${villa.status}</div>
+                    </div>
+                    <div class="villa-card-specs">
+                        <span class="villa-card-type">${villa.type.split(' ')[0]} Type</span>
+                        <span class="villa-card-size"><i class="fas fa-ruler-combined"></i> ${villa.size.split(' ')[0]} SF</span>
+                    </div>
+                    <div class="villa-card-availability">
+                        <span>${villa.availability}</span>
+                        <span style="font-weight:600; color:var(--primary); font-size:12px;">${villa.price}</span>
+                    </div>
+                `;
+                
+                card.addEventListener('click', () => showVillaPopover(villa, card));
+                return card;
+            }
+
+            // 3. Render List View
+            function renderList() {
+                listViewContainer.innerHTML = '';
+                villas.forEach(villa => {
+                    const card = document.createElement('div');
+                    card.className = 'villa-card';
+                    card.setAttribute('data-id', villa.id);
+                    card.setAttribute('data-status', villa.status);
+                    
+                    let badgeClass = 'badge-available';
+                    if (villa.status === 'sold') badgeClass = 'badge-sold';
+                    else if (villa.status === 'construction') badgeClass = 'badge-progress';
+                    else if (villa.status === 'occupied') badgeClass = 'badge-progress'; // custom class or reuse
+
+                    card.innerHTML = `
+                        <div class="villa-img">
+                            <img src="${villa.img}" alt="${villa.type}">
+                            <span class="badge ${badgeClass}" style="${villa.status === 'occupied' ? 'background-color:#48BB78;' : ''}">${villa.availability}</span>
+                        </div>
+                        <div class="villa-content" style="background-color:#141b22; color:white; border: 1px solid #233140; border-top:none;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <h3 style="font-family:'Playfair Display', serif; font-size:22px; margin:0;">Villa ${villa.id}</h3>
+                                <span style="font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--primary);">${villa.type}</span>
+                            </div>
+                            <p class="villa-desc" style="color:#a0aec0; min-height:auto; margin-bottom:15px; font-size:13px;">Premium custom architectural blueprint containing top tier specifications, modular layouts, and dedicated lawns.</p>
+                            <ul class="villa-specs" style="border-bottom: 1px solid #233140; padding-bottom:15px; margin-bottom:15px;">
+                                <li style="color:#a0aec0;"><i class="fas fa-vector-square"></i> ${villa.size}</li>
+                                <li style="color:#a0aec0;"><i class="fas fa-bed"></i> ${villa.config.toUpperCase()} Layout</li>
+                                <li style="color:#a0aec0;"><i class="fas fa-car"></i> 2 Parks</li>
+                            </ul>
+                            <div class="villa-footer">
+                                <div class="price">
+                                    <span style="color:#a0aec0;">Price Guide</span>
+                                    <h4 style="color:white; font-size:22px;">${villa.price}</h4>
+                                </div>
+                                <a href="villa-detail.html?id=${villa.id}" class="btn btn-primary btn-sm">Full Details</a>
+                            </div>
+                        </div>
+                    `;
+                    listViewContainer.appendChild(card);
+                });
+            }
+
+            // Initialize rendering
+            renderMap();
+            renderList();
+            applyZoom();
+
+            // 4. Popover Drawers
+            const popover = document.getElementById('mapPopover');
+            const popoverTitle = document.getElementById('popoverTitle');
+            const popoverImg = document.getElementById('popoverImg');
+            const popoverStatusBadge = document.getElementById('popoverStatusBadge');
+            const popoverType = document.getElementById('popoverType');
+            const popoverSize = document.getElementById('popoverSize');
+            const popoverAvailability = document.getElementById('popoverAvailability');
+            const popoverPrice = document.getElementById('popoverPrice');
+            const popoverDetailBtn = document.getElementById('popoverDetailBtn');
+            const popoverClose = document.getElementById('popoverClose');
+
+            function showVillaPopover(villa, cardElement) {
+                // Highlight active card
+                document.querySelectorAll('.map-villa-card').forEach(c => c.classList.remove('active-card'));
+                cardElement.classList.add('active-card');
+
+                popoverTitle.innerText = `Villa ${villa.id}`;
+                popoverImg.src = villa.img;
+                
+                // Status badge
+                popoverStatusBadge.className = `badge ${villa.status === 'sold' ? 'badge-sold' : villa.status === 'available' ? 'badge-available' : 'badge-progress'}`;
+                popoverStatusBadge.innerText = villa.status;
+                if (villa.status === 'occupied') {
+                    popoverStatusBadge.style.backgroundColor = '#48BB78';
+                } else {
+                    popoverStatusBadge.style.backgroundColor = '';
+                }
+
+                popoverType.innerText = villa.type;
+                popoverSize.innerText = villa.size;
+                popoverAvailability.innerText = villa.availability;
+                popoverPrice.innerText = villa.price;
+                
+                // Set link details
+                popoverDetailBtn.href = `villa-detail.html?id=${villa.id}`;
+
+                // Slide popover open
+                popover.classList.add('active');
+            }
+
+            function closePopover() {
+                popover.classList.remove('active');
+                document.querySelectorAll('.map-villa-card').forEach(c => c.classList.remove('active-card'));
+            }
+
+            popoverClose.addEventListener('click', closePopover);
+
+            // 5. Interactive controls (Search, Filter, Zoom, View Toggle)
+            
+            // View Mode Toggle
+            const btnMapView = document.getElementById('btnMapView');
+            const btnListView = document.getElementById('btnListView');
+            const masterPlanGraphicView = document.getElementById('masterPlanGraphicView');
+
+            btnMapView.addEventListener('click', () => {
+                btnMapView.classList.add('active');
+                btnListView.classList.remove('active');
+                mapWrapper.style.display = 'block';
+                listViewContainer.style.display = 'none';
+                
+                // Show graphic master plan if param active
+                const urlParams = new URLSearchParams(window.location.search);
+                if (urlParams.get('view') === 'master-plan') {
+                    masterPlanGraphicView.style.display = 'flex';
+                }
+            });
+
+            btnListView.addEventListener('click', () => {
+                btnListView.classList.add('active');
+                btnMapView.classList.remove('active');
+                mapWrapper.style.display = 'none';
+                listViewContainer.style.display = 'grid';
+                masterPlanGraphicView.style.display = 'none';
+            });
+
+            // Filter Tabs
+            const filterTabs = document.querySelectorAll('.filter-tab');
+            filterTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const filter = tab.getAttribute('data-filter');
+                    applyFilter(filter);
+                });
+            });
+
+            function applyFilter(filter) {
+                // Apply to Map View
+                const cards = document.querySelectorAll('.map-villa-card');
+                cards.forEach(card => {
+                    const status = card.getAttribute('data-status');
+                    if (filter === 'all' || status === filter) {
+                        card.classList.remove('filtered-out');
+                    } else {
+                        card.classList.add('filtered-out');
+                    }
+                });
+
+                // Apply to List View
+                const listCards = listViewContainer.querySelectorAll('.villa-card');
+                listCards.forEach(card => {
+                    const status = card.getAttribute('data-status');
+                    if (filter === 'all' || status === filter) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            }
+
+            // Search Filter
+            const searchInput = document.getElementById('villaSearch');
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim().toLowerCase();
+                
+                // Reset active filters
+                filterTabs.forEach(t => t.classList.remove('active'));
+                document.querySelector('[data-filter="all"]').classList.add('active');
+
+                // Map View Search filter
+                const cards = document.querySelectorAll('.map-villa-card');
+                let foundCard = null;
+
+                cards.forEach(card => {
+                    const id = card.getAttribute('data-id');
+                    if (id.includes(query)) {
+                        card.classList.remove('filtered-out');
+                        if (id === query && !foundCard) {
+                            foundCard = card;
+                        }
+                    } else {
+                        card.classList.add('filtered-out');
+                    }
+                });
+
+                // List View Search filter
+                const listCards = listViewContainer.querySelectorAll('.villa-card');
+                listCards.forEach(card => {
+                    const id = card.getAttribute('data-id');
+                    if (id.includes(query)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+
+                // Auto popover on exact match
+                if (foundCard && query.length === 3) {
+                    const villaId = foundCard.getAttribute('data-id');
+                    const villa = villas.find(v => v.id === villaId);
+                    if (villa) {
+                        showVillaPopover(villa, foundCard);
+                        // Auto-scroll to center card in viewport
+                        foundCard.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'center' });
+                    }
+                }
+            });
+
+            // 6. Zoom & Pan Functionality
+            
+            document.getElementById('zoomIn').addEventListener('click', () => {
+                zoomScale = Math.min(zoomScale + 0.15, 2.0);
+                applyZoom();
+            });
+            document.getElementById('zoomOut').addEventListener('click', () => {
+                zoomScale = Math.max(zoomScale - 0.15, 0.5);
+                applyZoom();
+            });
+            document.getElementById('zoomReset').addEventListener('click', () => {
+                zoomScale = 1.0;
+                applyZoom();
+                mapWrapper.scrollLeft = 0;
+            });
+
+            function applyZoom() {
+                mapZoomArea.style.transform = `scale(${zoomScale})`;
+                mapWrapper.style.height = (mapZoomArea.offsetHeight * zoomScale) + 'px';
+            }
+
+            // Drag to Pan Setup (Horizontal only)
+            let isDragging = false;
+            let startX;
+            let scrollLeft;
+
+            mapWrapper.addEventListener('mousedown', (e) => {
+                if (e.target.closest('.map-villa-card')) return; // Allow clicking cards
+                isDragging = true;
+                mapWrapper.style.cursor = 'grabbing';
+                startX = e.pageX - mapWrapper.offsetLeft;
+                scrollLeft = mapWrapper.scrollLeft;
+            });
+
+            mapWrapper.addEventListener('mouseleave', () => {
+                isDragging = false;
+                mapWrapper.style.cursor = 'default';
+            });
+
+            mapWrapper.addEventListener('mouseup', () => {
+                isDragging = false;
+                mapWrapper.style.cursor = 'default';
+            });
+
+            mapWrapper.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - mapWrapper.offsetLeft;
+                const walkX = (x - startX) * 1.5;
+                mapWrapper.scrollLeft = scrollLeft - walkX;
+            });
+
+            // Touch dragging for mobile (Horizontal only)
+            mapWrapper.addEventListener('touchstart', (e) => {
+                if (e.target.closest('.map-villa-card')) return;
+                isDragging = true;
+                startX = e.touches[0].pageX - mapWrapper.offsetLeft;
+                scrollLeft = mapWrapper.scrollLeft;
+            }, { passive: true });
+
+            mapWrapper.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+
+            mapWrapper.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                const x = e.touches[0].pageX - mapWrapper.offsetLeft;
+                const walkX = (x - startX) * 1.5;
+                mapWrapper.scrollLeft = scrollLeft - walkX;
+            }, { passive: true });
+
+            // 7. Process URL Parameters for dropdown states / filters
+            const urlParams = new URLSearchParams(window.location.search);
+            const viewParam = urlParams.get('view');
+            const filterParam = urlParams.get('filter');
+
+            if (viewParam === 'master-plan') {
+                masterPlanGraphicView.style.display = 'flex';
+                // Highlight master plan menu in side links
+                document.querySelectorAll('.dropdown-container a').forEach(a => {
+                    if (a.getAttribute('href').includes('view=master-plan')) {
+                        a.classList.add('active-submenu');
+                    }
+                });
+            }
+
+            if (filterParam) {
+                // Trigger active filter tab
+                const filterTab = document.querySelector(`[data-filter="${filterParam}"]`);
+                if (filterTab) {
+                    filterTabs.forEach(t => t.classList.remove('active'));
+                    filterTab.classList.add('active');
+                    applyFilter(filterParam);
+                }
+            }
+        });
+    </script>
+</body>
+</html>

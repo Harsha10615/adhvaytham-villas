@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villa Configurations & Types | Adhvaytham Villas</title>
+    <meta name="description" content="View the luxury villa configurations at Adhvaytham Villas. Explore floor plans, plot sizes, and status details of our 2BHK, 3BHK, and 4BHK homes.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Shared Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <button class="hamburger-btn" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="../index.html" class="logo">Adhvaytham <span>Villas</span></a>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <span class="sidebar-close">&times;</span>
+            <a href="../index.html" class="sidebar-logo">Adhvaytham <span>Villas</span></a>
+        </div>
+        <nav class="sidebar-links">
+            <a href="../index.html">Home</a>
+            <a href="about.html">About</a>
+            <div class="sidebar-dropdown">
+                <button class="dropdown-btn">Master Layout <i class="fas fa-chevron-down dropdown-arrow"></i></button>
+                <div class="dropdown-container">
+                    <a href="street-level-map.html">Street Level Map</a>
+                    <a href="street-level-map.html?view=master-plan">Master Plan</a>
+                    <a href="street-level-map.html?filter=all">All 120 Villas</a>
+                    <a href="street-level-map.html?filter=available">Available Villas</a>
+                    <a href="street-level-map.html?filter=occupied">Occupied Villas</a>
+                    <a href="street-level-map.html?filter=construction">Under Construction Villas</a>
+                    <a href="street-level-map.html?filter=sold">Sold Villas</a>
+                </div>
+            </div>
+            <a href="villas.html#availability">Availability</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="location.html">Location</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <a href="contact.html" class="btn btn-primary btn-full btn-sm">Schedule Site Visit</a>
+        </div>
+    </aside>
+
+    <!-- Breadcrumbs Banner -->
+    <section class="breadcrumbs-banner">
+        <div class="container breadcrumbs-content">
+            <h1>Villa Configurations</h1>
+            <div class="breadcrumb-path">
+                <a href="../index.html">Home</a><span>/</span>Villas
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Villa Grid -->
+    <section id="availability" class="section-padding">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">VILLA TYPES & PRICING</span>
+                <h2 class="section-title">Explore Our Premium Layouts</h2>
+                <p>We offer diverse configurations designed for multi-generational families. Use the tabs below to filter the villas based on possession status.</p>
+            </div>
+
+            <!-- Tab Navigation (Handles in assets/js/script.js) -->
+            <div class="villa-tabs">
+                <button class="tab-btn active" data-tab="all">All Configurations</button>
+                <button class="tab-btn" data-tab="ready">Ready To Move</button>
+                <button class="tab-btn" data-tab="construction">Under Construction</button>
+                <button class="tab-btn" data-tab="sold">Completely Sold</button>
+            </div>
+
+            <div class="villas-grid">
+                <!-- 2BHK -->
+                <div class="villa-card" data-status="sold" data-config="2bhk">
+                    <div class="villa-img">
+                        <img src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="2BHK Villa Layout">
+                        <span class="badge badge-sold">Sold Out</span>
+                    </div>
+                    <div class="villa-content">
+                        <h3>2BHK Residential Villa</h3>
+                        <p class="villa-desc">Intimate luxury with cozy spaces, ideal for modern small families who values compact design.</p>
+                        <ul class="villa-specs">
+                            <li><i class="fas fa-vector-square"></i> 1,500 Sq. Ft.</li>
+                            <li><i class="fas fa-bed"></i> 2 Beds</li>
+                            <li><i class="fas fa-car"></i> 1 Park</li>
+                        </ul>
+                        <div class="villa-footer">
+                            <div class="price price-sold">
+                                <span>Starting Price</span>
+                                <h4>₹ 1.25 Cr</h4>
+                            </div>
+                            <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Phase 1 Sold</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3BHK Executive -->
+                <div class="villa-card" data-status="ready" data-config="3bhk">
+                    <div class="villa-img">
+                        <img src="../assets/images/villa_3bhk.png" alt="3BHK Executive Villa">
+                        <span class="badge badge-available">Ready To Move</span>
+                    </div>
+                    <div class="villa-content">
+                        <h3>3BHK Executive Villa</h3>
+                        <p class="villa-desc">Spacious living areas, high ceilings, and individual lawn. Perfect for growing families.</p>
+                        <ul class="villa-specs">
+                            <li><i class="fas fa-vector-square"></i> 2,250 Sq. Ft.</li>
+                            <li><i class="fas fa-bed"></i> 3 Beds</li>
+                            <li><i class="fas fa-car"></i> 2 Parks</li>
+                        </ul>
+                        <div class="villa-footer">
+                            <div class="price">
+                                <span>Starting Price</span>
+                                <h4>₹ 1.85 Cr</h4>
+                            </div>
+                            <a href="contact.html" class="btn btn-primary btn-sm">Enquire</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3BHK Construction -->
+                <div class="villa-card" data-status="construction" data-config="3bhk">
+                    <div class="villa-img">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="3BHK Under Construction">
+                        <span class="badge badge-progress">Under Construction</span>
+                    </div>
+                    <div class="villa-content">
+                        <h3>3BHK Premium Villa</h3>
+                        <p class="villa-desc">Phase 2 unit with custom structural modifications option. Corner plots available.</p>
+                        <ul class="villa-specs">
+                            <li><i class="fas fa-vector-square"></i> 2,400 Sq. Ft.</li>
+                            <li><i class="fas fa-bed"></i> 3 Beds</li>
+                            <li><i class="fas fa-car"></i> 2 Parks</li>
+                        </ul>
+                        <div class="villa-footer">
+                            <div class="price">
+                                <span>Pre-launch Price</span>
+                                <h4>₹ 1.78 Cr</h4>
+                            </div>
+                            <a href="contact.html" class="btn btn-primary btn-sm">Book Plot</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4BHK Signature -->
+                <div class="villa-card" data-status="ready" data-config="4bhk">
+                    <div class="villa-img">
+                        <img src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="4BHK Signature Villa">
+                        <span class="badge badge-available">Ready To Move</span>
+                    </div>
+                    <div class="villa-content">
+                        <h3>4BHK Signature Villa</h3>
+                        <p class="villa-desc">Expansive spaces, dual kitchen layouts, grand master bedroom, and premium private garden.</p>
+                        <ul class="villa-specs">
+                            <li><i class="fas fa-vector-square"></i> 3,500 Sq. Ft.</li>
+                            <li><i class="fas fa-bed"></i> 4 Beds</li>
+                            <li><i class="fas fa-car"></i> 3 Parks</li>
+                        </ul>
+                        <div class="villa-footer">
+                            <div class="price">
+                                <span>Starting Price</span>
+                                <h4>₹ 2.95 Cr</h4>
+                            </div>
+                            <a href="contact.html" class="btn btn-primary btn-sm">Enquire</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4BHK Premium Phase 2 -->
+                <div class="villa-card" data-status="construction" data-config="4bhk">
+                    <div class="villa-img">
+                        <img src="https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="4BHK Under Construction">
+                        <span class="badge badge-progress">Under Construction</span>
+                    </div>
+                    <div class="villa-content">
+                        <h3>4BHK Grand Estate</h3>
+                        <p class="villa-desc">Ultra-premium villa featuring an optional private swimming pool and home theater setup.</p>
+                        <ul class="villa-specs">
+                            <li><i class="fas fa-vector-square"></i> 4,100 Sq. Ft.</li>
+                            <li><i class="fas fa-bed"></i> 4 Beds</li>
+                            <li><i class="fas fa-car"></i> 3 Parks</li>
+                        </ul>
+                        <div class="villa-footer">
+                            <div class="price">
+                                <span>Pre-launch Price</span>
+                                <h4>₹ 3.40 Cr</h4>
+                            </div>
+                            <a href="contact.html" class="btn btn-primary btn-sm">Book Plot</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Structural Specifications & Quality Info -->
+    <section class="section-padding bg-light">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-subtitle">QUALITY ASSURANCE</span>
+                <h2 class="section-title">Construction Specifications</h2>
+                <p>We build with materials that withstand the elements, ensuring minimal lifetime maintenance costs for our residents.</p>
+            </div>
+            
+            <div class="highlights-grid">
+                <div class="highlight-card">
+                    <i class="fas fa-shield"></i>
+                    <h3>Foundation & Structure</h3>
+                    <p>Seismic Zone II compliant RCC framed structure with heavy-grade steel rods and M25 grade concrete mix.</p>
+                </div>
+                <div class="highlight-card">
+                    <i class="fas fa-door-open"></i>
+                    <h3>Doors & Windows</h3>
+                    <p>Main door frame in seasoned teakwood. Double-glazed UPVC windows with mosquito mesh and security grills.</p>
+                </div>
+                <div class="highlight-card">
+                    <i class="fas fa-faucet"></i>
+                    <h3>Plumbing & Sanitary</h3>
+                    <p>Concealed piping using premium CPVC. Top-brand ceramic products (Kohler/Grohe fittings) installed in all washrooms.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Banner -->
+    <section class="cta-banner">
+        <div class="container">
+            <h2>View Our Model Villa Floor Plans</h2>
+            <p>Get architectural blueprints, dimensional calculations, and room allocations by scheduling a digital or physical walkthrough.</p>
+            <a href="contact.html" class="btn btn-primary">Request Floor Plans PDF</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3 class="logo">Adhvaytham<span>.</span></h3>
+                    <p>A premium gated villa community of 120 luxury residences. Built with high structural integrity and active social spaces, offering families a reliable, lifetime investment.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="villas.html">Villa Configs</a></li>
+                        <li><a href="amenities.html">Amenities</a></li>
+                        <li><a href="progress.html">Construction Progress</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="gallery.html">Photo Gallery</a></li>
+                        <li><a href="location.html">Location Advantages</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to receive construction updates, floor plan launches, and phase announcements.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Adhvaytham Villas. Developed by Adhvaytham Projects Group. All Rights Reserved. RERA Registered.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919876543210" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Shared Javascript helper -->
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>

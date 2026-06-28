@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Villa Details | Adhvaytham Villas</title>
+    <meta name="description" content="View detailed specifications, floor plans, and availability status for individual homes at Adhvaytham Villas.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Shared Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body style="background-color: var(--white);">
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <button class="hamburger-btn" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="../index.html" class="logo">Adhvaytham <span>Villas</span></a>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <span class="sidebar-close">&times;</span>
+            <a href="../index.html" class="sidebar-logo">Adhvaytham <span>Villas</span></a>
+        </div>
+        <nav class="sidebar-links">
+            <a href="../index.html">Home</a>
+            <a href="about.html">About</a>
+            <div class="sidebar-dropdown">
+                <button class="dropdown-btn">Master Layout <i class="fas fa-chevron-down dropdown-arrow"></i></button>
+                <div class="dropdown-container">
+                    <a href="street-level-map.html">Street Level Map</a>
+                    <a href="street-level-map.html?view=master-plan">Master Plan</a>
+                    <a href="street-level-map.html?filter=all">All 120 Villas</a>
+                    <a href="street-level-map.html?filter=available">Available Villas</a>
+                    <a href="street-level-map.html?filter=occupied">Occupied Villas</a>
+                    <a href="street-level-map.html?filter=construction">Under Construction Villas</a>
+                    <a href="street-level-map.html?filter=sold">Sold Villas</a>
+                </div>
+            </div>
+            <a href="villas.html#availability">Availability</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="location.html">Location</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <a href="contact.html" class="btn btn-primary btn-full btn-sm">Schedule Site Visit</a>
+        </div>
+    </aside>
+
+    <!-- Breadcrumbs Banner -->
+    <section class="breadcrumbs-banner">
+        <div class="container breadcrumbs-content">
+            <h1 id="bannerTitle">Villa Details</h1>
+            <div class="breadcrumb-path">
+                <a href="../index.html">Home</a><span>/</span><a href="street-level-map.html">Master Layout</a><span>/</span><span id="breadcrumbVilla">Villa</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Villa Detail Section -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="detail-grid">
+                
+                <!-- Left: Image Gallery -->
+                <div class="detail-gallery">
+                    <div class="detail-main-img">
+                        <img id="detailMainImg" src="" alt="Villa Front elevation">
+                    </div>
+                    <div class="detail-thumbs">
+                        <div class="detail-thumb active" id="thumb1Box"><img id="thumb1" src="" alt="View 1"></div>
+                        <div class="detail-thumb" id="thumb2Box"><img id="thumb2" src="https://images.unsplash.com/photo-1600607687644-aac4c15cecb1?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="View 2"></div>
+                        <div class="detail-thumb" id="thumb3Box"><img id="thumb3" src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="View 3"></div>
+                    </div>
+                </div>
+
+                <!-- Right: Information & Form -->
+                <div class="villa-info-box">
+                    <div class="spec-badge-row">
+                        <h2 id="detailVillaNum" style="font-size: 36px; font-family: 'Playfair Display', serif; margin: 0;">Villa 000</h2>
+                        <span id="detailStatusPill" class="detail-status-pill">STATUS</span>
+                    </div>
+                    
+                    <div>
+                        <span class="section-subtitle" id="detailTypeLabel">Villa Type</span>
+                        <p id="detailDescription" style="color: var(--text-muted); font-size: 15px; line-height: 1.8; margin-top: 10px;">
+                            This signature residence offers contemporary architectural outlines combined with luxurious internal spaces. Features include double height ceilings, solid brick walls, customized modular kitchen structures, and individual manicured lawns. 
+                        </p>
+                    </div>
+
+                    <!-- Specs Details Grid -->
+                    <div class="detail-specs-grid">
+                        <div class="detail-spec-item">
+                            <i class="fas fa-vector-square"></i>
+                            <div>
+                                <span>Plot Size</span>
+                                <h4 id="detailSize">-</h4>
+                            </div>
+                        </div>
+                        <div class="detail-spec-item">
+                            <i class="fas fa-bed"></i>
+                            <div>
+                                <span>Configuration</span>
+                                <h4 id="detailConfig">-</h4>
+                            </div>
+                        </div>
+                        <div class="detail-spec-item">
+                            <i class="fas fa-car"></i>
+                            <div>
+                                <span>Parking Spaces</span>
+                                <h4 id="detailParking">2 Covered Parks</h4>
+                            </div>
+                        </div>
+                        <div class="detail-spec-item">
+                            <i class="fas fa-compass"></i>
+                            <div>
+                                <span>Property Facing</span>
+                                <h4 id="detailFacing">East Facing</h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing & Action -->
+                    <div style="background-color: var(--bg-light); padding: 20px; border-left: 4px solid var(--primary); display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <span style="font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 600;">Price Guide (Starting)</span>
+                            <h3 id="detailPrice" style="font-size: 28px; color: var(--text-dark); margin: 0; font-family: 'Inter', sans-serif; font-weight: 700;">₹ 1.85 Cr</h3>
+                        </div>
+                        <div>
+                            <span id="detailAvailabilityLabel" style="font-size: 13px; font-weight: 600; color: var(--primary-dark);">Availability: -</span>
+                        </div>
+                    </div>
+
+                    <!-- Tailored Enquiry Form -->
+                    <div class="contact-form-card" style="padding: 30px; margin-top: 15px;">
+                        <h3 style="font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 20px;">Register Your Interest</h3>
+                        <form id="villaEnquiryForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="clientName">Full Name</label>
+                                    <input type="text" id="clientName" placeholder="Your Name" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="clientPhone">Phone Number</label>
+                                    <input type="tel" id="clientPhone" placeholder="Your Number" required>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="enquiryMessage">Enquiry Message</label>
+                                <textarea id="enquiryMessage" rows="3" required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-full">Submit Enquiry</button>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3 class="logo">Adhvaytham<span>.</span></h3>
+                    <p>A premium gated villa community of 120 luxury residences. Built with high structural integrity and active social spaces, offering families a reliable, lifetime investment.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="villas.html">Villa Configs</a></li>
+                        <li><a href="amenities.html">Amenities</a></li>
+                        <li><a href="progress.html">Construction Progress</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="gallery.html">Photo Gallery</a></li>
+                        <li><a href="location.html">Location Advantages</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to receive construction updates, floor plan launches, and phase announcements.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Adhvaytham Villas. Developed by Adhvaytham Projects Group. All Rights Reserved. RERA Registered.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Shared Javascript helper -->
+    <script src="../assets/js/script.js"></script>
+
+    <!-- Dynamic details page logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Generate identical 120 villas data model
+            const villas = [];
+            const imageMap = {
+                "2bhk": "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "3bhk-exec": "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "3bhk-prem": "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "4bhk-sig": "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
+                "4bhk-grand": "https://images.unsplash.com/photo-1600607687644-aac4c15cecb1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
+            };
+
+            for (let i = 1; i <= 120; i++) {
+                const id = String(i).padStart(3, '0');
+                let config, type, size, price, status, availability, img, facing;
+                
+                // Deterministic facings (East/West layout)
+                facing = (i % 2 === 0) ? "East Facing" : "West Facing";
+                if (i % 8 === 0) facing = "North Corner Facing";
+
+                if (i <= 20) {
+                    config = "2BHK";
+                    type = "2BHK Residential Villa";
+                    size = "1,500 Sq. Ft.";
+                    price = "₹ 1.25 Cr";
+                    status = (i % 5 === 0) ? "sold" : "occupied";
+                    img = imageMap["2bhk"];
+                } else if (i <= 50) {
+                    config = "3BHK";
+                    type = "3BHK Executive Villa";
+                    size = "2,250 Sq. Ft.";
+                    price = "₹ 1.85 Cr";
+                    if (i === 21 || i === 26 || i === 31 || i === 36 || i === 41 || i === 46) status = "available";
+                    else if (i === 25 || i === 30 || i === 35 || i === 40) status = "sold";
+                    else status = "occupied";
+                    img = imageMap["3bhk-exec"];
+                } else if (i <= 80) {
+                    config = "3BHK";
+                    type = "3BHK Premium Villa";
+                    size = "2,400 Sq. Ft.";
+                    price = "₹ 1.78 Cr";
+                    if (i === 55 || i === 60 || i === 65 || i === 70 || i === 75) status = "sold";
+                    else if ([51, 53, 57, 59, 61, 63, 67, 69, 71, 73].includes(i)) status = "available";
+                    else status = "construction";
+                    img = imageMap["3bhk-prem"];
+                } else if (i <= 100) {
+                    config = "4BHK";
+                    type = "4BHK Signature Villa";
+                    size = "3,500 Sq. Ft.";
+                    price = "₹ 2.95 Cr";
+                    if (i === 85 || i === 95) status = "sold";
+                    else if ([81, 83, 87, 89, 91, 93, 97, 99].includes(i)) status = "available";
+                    else status = "occupied";
+                    img = imageMap["4bhk-sig"];
+                } else {
+                    config = "4BHK";
+                    type = "4BHK Grand Estate";
+                    size = "4,100 Sq. Ft.";
+                    price = "₹ 3.40 Cr";
+                    status = "construction";
+                    img = imageMap["4bhk-grand"];
+                }
+
+                if (status === "occupied") availability = "Families Residing";
+                else if (status === "available") {
+                    availability = (type.includes("Premium") || type.includes("Grand")) ? "Booking Open" : "Ready to Move";
+                } else if (status === "construction") availability = "Under Construction";
+                else if (status === "sold") availability = "Sold Out";
+
+                villas.push({ id, config, type, size, price, status, availability, img, facing });
+            }
+
+            // Extract Villa ID parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            const villaId = urlParams.get('id') || "001";
+            
+            // Find villa details
+            const villa = villas.find(v => v.id === villaId) || villas[0];
+
+            // Populate page elements
+            document.getElementById('bannerTitle').innerText = `Villa ${villa.id} Details`;
+            document.getElementById('breadcrumbVilla').innerText = `Villa ${villa.id}`;
+            document.getElementById('detailVillaNum').innerText = `Villa ${villa.id}`;
+            
+            const mainImg = document.getElementById('detailMainImg');
+            mainImg.src = villa.img;
+            document.getElementById('thumb1').src = villa.img;
+            
+            // Status tag
+            const statusPill = document.getElementById('detailStatusPill');
+            statusPill.className = `detail-status-pill ${villa.status}`;
+            statusPill.innerText = villa.status;
+            
+            document.getElementById('detailTypeLabel').innerText = villa.type;
+            document.getElementById('detailSize').innerText = villa.size;
+            document.getElementById('detailConfig').innerText = `${villa.config} Luxury Layout`;
+            document.getElementById('detailPrice').innerText = villa.price;
+            document.getElementById('detailAvailabilityLabel').innerText = `Availability: ${villa.availability}`;
+            document.getElementById('detailFacing').innerText = villa.facing;
+            
+            // Set dynamic parking allocation
+            const parkSlots = (villa.config === '4BHK') ? '3 Covered Parks' : (villa.config === '3BHK') ? '2 Covered Parks' : '1 Private Park';
+            document.getElementById('detailParking').innerText = parkSlots;
+
+            // Description custom overrides
+            let desc = `This premium ${villa.type} is designed for optimal natural light and airflow. Featuring double-brick cavity walls, Seismic Zone II structural safety, and high-quality fixtures from brands like Kohler and Grohe.`;
+            if (villa.status === 'occupied') {
+                desc += ` This residence is part of Phase 1 and is currently occupied by residents who enjoy access to the full suite of operational township amenities.`;
+            } else if (villa.status === 'available') {
+                desc += ` This unit is fully completed and open for prospective buyers. Schedule an immediate site visit to inspect the layout, quality finishes, and landscaped lawn.`;
+            } else if (villa.status === 'construction') {
+                desc += ` Currently under active construction in Phase 2. Prospective buyers can coordinate structural personalization (e.g. customized flooring, cabinet fixtures, electrical layout) with our site engineering crew.`;
+            } else if (villa.status === 'sold') {
+                desc += ` This completed unit has been successfully sold to a resident family. You may check other available configurations in adjacent streets.`;
+            }
+            document.getElementById('detailDescription').innerText = desc;
+
+            // Thumbnail Click Event
+            const thumbs = document.querySelectorAll('.detail-thumb');
+            thumbs.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    thumbs.forEach(t => t.classList.remove('active'));
+                    thumb.classList.add('active');
+                    mainImg.src = thumb.querySelector('img').src;
+                });
+            });
+
+            // Form Pre-fill & Submit Handler
+            const textarea = document.getElementById('enquiryMessage');
+            let formMessage = `Dear Sales Team, I am interested in Villa ${villa.id} (${villa.type}). Please share detailed floor plans, pricing sheets, and coordinate a site visit.`;
+            if (villa.status === 'occupied') {
+                formMessage = `I am interested in learning more about resale values or similar units in the township like Villa ${villa.id} (${villa.type}).`;
+            } else if (villa.status === 'construction') {
+                formMessage = `Dear Sales Team, I would like to enquire about booking and customizing the under-construction Villa ${villa.id} (${villa.type}).`;
+            }
+            textarea.value = formMessage;
+
+            const form = document.getElementById('villaEnquiryForm');
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('clientName').value;
+                alert(`Thank you, ${name}! Your enquiry for Villa ${villa.id} has been logged. Our representative will contact you shortly.`);
+                form.reset();
+            });
+        });
+    </script>
+</body>
+</html>

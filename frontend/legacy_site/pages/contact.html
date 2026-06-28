@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us & Book Site Visit | Adhvaytham Villas</title>
+    <meta name="description" content="Get in touch with Adhvaytham Villas sales team. Book a guided site visit, request floor plans, or find our office location and helpline contacts.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Shared Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+</head>
+<body>
+
+    <!-- Top Bar -->
+    <header class="top-bar">
+        <button class="hamburger-btn" aria-label="Open Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="../index.html" class="logo">Adhvaytham <span>Villas</span></a>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar-overlay"></div>
+    <aside class="sidebar">
+        <div class="sidebar-top">
+            <span class="sidebar-close">&times;</span>
+            <a href="../index.html" class="sidebar-logo">Adhvaytham <span>Villas</span></a>
+        </div>
+        <nav class="sidebar-links">
+            <a href="../index.html">Home</a>
+            <a href="about.html">About</a>
+            <div class="sidebar-dropdown">
+                <button class="dropdown-btn">Master Layout <i class="fas fa-chevron-down dropdown-arrow"></i></button>
+                <div class="dropdown-container">
+                    <a href="street-level-map.html">Street Level Map</a>
+                    <a href="street-level-map.html?view=master-plan">Master Plan</a>
+                    <a href="street-level-map.html?filter=all">All 120 Villas</a>
+                    <a href="street-level-map.html?filter=available">Available Villas</a>
+                    <a href="street-level-map.html?filter=occupied">Occupied Villas</a>
+                    <a href="street-level-map.html?filter=construction">Under Construction Villas</a>
+                    <a href="street-level-map.html?filter=sold">Sold Villas</a>
+                </div>
+            </div>
+            <a href="villas.html#availability">Availability</a>
+            <a href="amenities.html">Amenities</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="location.html">Location</a>
+            <a href="contact.html">Contact</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <a href="contact.html" class="btn btn-primary btn-full btn-sm">Schedule Site Visit</a>
+        </div>
+    </aside>
+
+    <!-- Breadcrumbs Banner -->
+    <section class="breadcrumbs-banner">
+        <div class="container breadcrumbs-content">
+            <h1>Contact Our Sales Office</h1>
+            <div class="breadcrumb-path">
+                <a href="../index.html">Home</a><span>/</span>Contact Us
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact & Site Visit Form Section -->
+    <section class="section-padding">
+        <div class="container">
+            <div class="contact-layout">
+                <!-- Sales Desk Cards -->
+                <div class="contact-info-section">
+                    <span class="section-subtitle">GET IN TOUCH</span>
+                    <h2 style="font-size: 32px; font-family: 'Playfair Display', serif; margin-bottom: 10px; line-height:1.2;">We Are Ready to Assist You</h2>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">Contact our client relation desk directly or drop by our site sales cabin. We are active from 9:30 AM to 6:30 PM throughout the week.</p>
+                    
+                    <!-- Card 1 -->
+                    <div class="contact-detail-card">
+                        <div class="icon-box"><i class="fas fa-map-location-dot"></i></div>
+                        <div>
+                            <h3>Site Office Address</h3>
+                            <p>Adhvaytham Villas Sales Hub,<br>Block B, Premium Gated Sector,<br>Landmark: Near Highway Bypass, Pin 5000XX</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 2 -->
+                    <div class="contact-detail-card">
+                        <div class="icon-box"><i class="fas fa-phone-volume"></i></div>
+                        <div>
+                            <h3>Helplines & Toll-Free</h3>
+                            <p>Sales Hotline: +91 98765 43210<br>Toll-Free: 1800-XXX-XXXX</p>
+                        </div>
+                    </div>
+
+                    <!-- Card 3 -->
+                    <div class="contact-detail-card">
+                        <div class="icon-box"><i class="fas fa-envelope-open-text"></i></div>
+                        <div>
+                            <h3>Official Enquiries</h3>
+                            <p>sales@adhvaythamvillas.com<br>info@adhvaythamprojects.com</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Card -->
+                <div class="contact-form-card">
+                    <h2>Book a Site Visit</h2>
+                    
+                    <form id="mpaContactForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name *</label>
+                                <input type="text" id="name" placeholder="E.g. Rajesh Kumar" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number *</label>
+                                <input type="tel" id="phone" placeholder="10-digit mobile number" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" placeholder="name@domain.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="visitDate">Preferred Date</label>
+                                <input type="date" id="visitDate">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="configuration">Preferred Villa Type</label>
+                            <select id="configuration">
+                                <option value="any">Select Configuration</option>
+                                <option value="3bhk">3BHK Executive (Ready/Under Construction)</option>
+                                <option value="4bhk">4BHK Signature (Ready/Under Construction)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Your Message</label>
+                            <textarea id="message" rows="4" placeholder="Briefly describe your requirements or queries..."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full">Submit Visit Request</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map and Office Hours Section -->
+    <section class="section-padding bg-light" style="padding-top: 60px;">
+        <div class="container">
+            <div class="location-layout" style="grid-template-columns: 1fr 1fr;">
+                <div class="map-wrapper" style="height: 380px;">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3888.583193498968!2d77.5857503!3d12.934485!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTLCsDU2JzA0LjEiTiA3N8KwMzUnMDguNyJF!5e0!3m2!1sen!2sin!4v1620000000000!5m2!1sen!2sin" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+                </div>
+                <div class="about-text" style="display:flex; flex-direction:column; justify-content:center;">
+                    <span class="section-subtitle">VISITING INFORMATION</span>
+                    <h3 style="font-size: 26px; font-family: 'Playfair Display', serif; margin-bottom: 15px;">Site Office Timings</h3>
+                    <p style="color: var(--text-muted); margin-bottom: 20px;">We encourage families to visit on weekends to see the community atmosphere and active children parks. Please schedule beforehand so we can assign a dedicated relationship manager to show you the floor plans and layout.</p>
+                    <ul style="list-style:none; padding:0; font-size:15px;">
+                        <li style="margin-bottom:8px;"><i class="far fa-clock" style="color:var(--primary-dark); margin-right:10px;"></i> <strong>Monday - Friday:</strong> 9:30 AM to 6:30 PM</li>
+                        <li style="margin-bottom:8px;"><i class="far fa-clock" style="color:var(--primary-dark); margin-right:10px;"></i> <strong>Saturday - Sunday:</strong> 9:00 AM to 7:00 PM</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h3 class="logo">Adhvaytham<span>.</span></h3>
+                    <p>A premium gated villa community of 120 luxury residences. Built with high structural integrity and active social spaces, offering families a reliable, lifetime investment.</p>
+                </div>
+                <div class="footer-col">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="../index.html">Home</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="villas.html">Villa Configs</a></li>
+                        <li><a href="amenities.html">Amenities</a></li>
+                        <li><a href="progress.html">Construction Progress</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Explore</h3>
+                    <ul class="footer-links">
+                        <li><a href="gallery.html">Photo Gallery</a></li>
+                        <li><a href="location.html">Location Advantages</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="faq.html">FAQ</a></li>
+                        <li><a href="contact.html">Contact Us</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h3>Newsletter</h3>
+                    <p>Subscribe to receive construction updates, floor plan launches, and phase announcements.</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Your Email Address" required>
+                        <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Adhvaytham Villas. Developed by Adhvaytham Projects Group. All Rights Reserved. RERA Registered.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- WhatsApp Floating Button -->
+    <a href="https://wa.me/919876543210" class="whatsapp-float" target="_blank" rel="noopener noreferrer" aria-label="Chat on WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+    </a>
+
+    <!-- Shared Javascript helper -->
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>
