@@ -25,8 +25,30 @@ initDb();
 
 const app = express();
 
-// Standard middleware
-app.use(cors());
+// Production-ready dynamic CORS configuration
+const corsOptions = {
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, server-to-server)
+    if (!origin) return callback(null, true);
+    if (process.env.CLIENT_URL && origin === process.env.CLIENT_URL) {
+      return callback(null, true);
+    }
+    if (process.env.FRONTEND_URL && origin === process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+    // If no explicit frontend url configured in env or in dev mode, dynamically allow requested origin
+    if (!process.env.CLIENT_URL && !process.env.FRONTEND_URL) {
+      return callback(null, true);
+    }
+    // Allow localhost during local development
+    if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 
 // Serve static uploaded files

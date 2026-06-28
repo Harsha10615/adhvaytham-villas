@@ -4,7 +4,8 @@ import { pool } from '../config/db.js';
 
 // Generate token helper
 const generateToken = (id) => {
-  return jwt.sign({ id }, process.env.JWT_SECRET, {
+  const secret = process.env.JWT_SECRET || 'adhvaytham_villas_production_secret_key_2026';
+  return jwt.sign({ id }, secret, {
     expiresIn: '30d',
   });
 };

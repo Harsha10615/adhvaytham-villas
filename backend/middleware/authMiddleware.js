@@ -13,7 +13,8 @@ export const protect = async (req, res, next) => {
       token = req.headers.authorization.split(' ')[1];
 
       // Verify token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const secret = process.env.JWT_SECRET || 'adhvaytham_villas_production_secret_key_2026';
+      const decoded = jwt.verify(token, secret);
 
       // Get user from the token, exclude password
       const [rows] = await pool.query('SELECT id, name, email, role, created_at FROM users WHERE id = ?', [decoded.id]);

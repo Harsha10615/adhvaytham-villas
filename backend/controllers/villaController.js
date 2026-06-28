@@ -1,5 +1,16 @@
 import { pool } from '../config/db.js';
 
+// Helper to ensure image_url is returned as an array even if stored as a string or null
+const formatVillaRows = (rows) => {
+  return rows.map(row => {
+    if (typeof row.images === 'string') {
+      try { row.images = JSON.parse(row.images); } catch (e) { row.images = []; }
+    }
+    if (!row.images) row.images = [];
+    return row;
+  });
+};
+
 // @desc    Get all villas (supports filters and search)
 // @route   GET /api/villas
 // @access  Public
@@ -28,7 +39,7 @@ export const getVillas = async (req, res) => {
     query += ' ORDER BY villa_number ASC';
 
     const [rows] = await pool.query(query, params);
-    res.json(rows);
+    res.json(formatVillaRows(rows));
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -55,9 +66,10 @@ export const getVillaById = async (req, res) => {
     }
 
     const [rows] = await pool.query(query, params);
+    const formatted = formatVillaRows(rows);
 
-    if (rows.length > 0) {
-      res.json(rows[0]);
+    if (formatted.length > 0) {
+      res.json(formatted[0]);
     } else {
       res.status(404).json({ message: 'Villa not found' });
     }
@@ -203,7 +215,8 @@ export const updateVilla = async (req, res) => {
     );
 
     const [updatedRows] = await pool.query('SELECT id AS _id, villa_number AS villaNumber, street_number AS street, villa_type AS type, status, plot_size AS plotSize, built_up_area AS builtUpArea, price, facing, availability, image_url AS images FROM villas WHERE id = ?', [id]);
-    res.json(updatedRows[0]);
+    const formatted = formatVillaRows(updatedRows);
+    res.json(formatted[0]);
 
   } catch (error) {
     res.status(500).json({ message: error.message });
