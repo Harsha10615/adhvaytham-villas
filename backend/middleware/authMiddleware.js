@@ -12,8 +12,11 @@ export const protect = async (req, res, next) => {
       // Get token from header
       token = req.headers.authorization.split(' ')[1];
 
-      // Verify token
-      const secret = process.env.JWT_SECRET || 'adhvaytham_villas_production_secret_key_2026';
+      // Verify token enforcing mandatory environment variable
+      const secret = process.env.JWT_SECRET;
+      if (!secret) {
+        throw new Error('SERVER_CONFIG_ERROR: JWT_SECRET variable is not configured.');
+      }
       const decoded = jwt.verify(token, secret);
 
       // Get user from the token, exclude password

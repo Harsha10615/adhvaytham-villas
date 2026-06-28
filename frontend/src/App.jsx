@@ -4,6 +4,32 @@ import Navbar from './components/Navbar';
 import Sidebar from './components/Sidebar';
 import Footer from './components/Footer';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import axios from 'axios';
+
+// Replace localhost API URL with VITE_API_URL for Railway backend deployment
+const rawApiUrl = import.meta.env.VITE_API_URL || '';
+axios.defaults.baseURL = rawApiUrl.replace(/\/$/, '');
+
+// Ensure image upload paths resolve correctly when deployed across different Railway domains
+axios.interceptors.response.use(response => {
+  if (response.data && rawApiUrl) {
+    const cleanBase = rawApiUrl.replace(/\/$/, '');
+    const transformUrls = (obj) => {
+      if (typeof obj === 'string' && obj.startsWith('/uploads')) {
+        return `${cleanBase}${obj}`;
+      } else if (Array.isArray(obj)) {
+        return obj.map(transformUrls);
+      } else if (obj !== null && typeof obj === 'object') {
+        for (let key of Object.keys(obj)) {
+          obj[key] = transformUrls(obj[key]);
+        }
+      }
+      return obj;
+    };
+    transformUrls(response.data);
+  }
+  return response;
+});
 
 // Pages
 import Home from './pages/Home';
@@ -79,6 +105,7 @@ function App() {
         <AppLayout>
           <Routes>
             <Route path="/" element={<Auth />} />
+            <Route path="/admin/login" element={<Auth />} />
             <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
             <Route path="/about" element={<ProtectedRoute><About /></ProtectedRoute>} />
             <Route path="/master-layout" element={<ProtectedRoute><MasterLayout /></ProtectedRoute>} />

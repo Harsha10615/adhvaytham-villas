@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import heroVillaImg from '../assets/hero-villa.jpg';
 
 const VillaBooking = () => {
   const navigate = useNavigate();
@@ -63,7 +64,7 @@ const VillaBooking = () => {
     <div style={{ backgroundColor: '#FAF9F6', minHeight: '100vh', paddingBottom: '80px' }}>
       {/* Breadcrumbs Banner */}
       <section style={{
-        background: 'linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url("/src/assets/hero-villa.jpg") center/cover no-repeat',
+        background: `linear-gradient(rgba(15, 23, 42, 0.85), rgba(15, 23, 42, 0.95)), url("${heroVillaImg}") center/cover no-repeat`,
         padding: '100px 0 60px',
         textAlign: 'center',
         color: '#fff',

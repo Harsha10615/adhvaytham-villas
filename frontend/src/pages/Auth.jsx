@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaGoogle, FaCheckCircle, FaUser, FaEnvelope, FaLock, FaPhone, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { useAuth } from '../context/AuthContext';
@@ -7,7 +7,8 @@ import axios from 'axios';
 import './Auth.css';
 
 const Auth = () => {
-  const [activeTab, setActiveTab] = useState('login'); // 'login' | 'register' | 'admin'
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState(() => location.pathname === '/admin/login' ? 'admin' : 'login'); // 'login' | 'register' | 'admin'
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,6 +18,12 @@ const Auth = () => {
   
   const { user, admin, loginUser, loginAdmin } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (location.pathname === '/admin/login') {
+      setActiveTab('admin');
+    }
+  }, [location.pathname]);
 
   // Redirect if already authenticated
   useEffect(() => {

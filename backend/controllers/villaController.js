@@ -245,11 +245,16 @@ export const deleteVilla = async (req, res) => {
 // @access  Public
 export const getVillaStats = async (req, res) => {
   try {
-    const [[{ total }]] = await pool.query('SELECT COUNT(*) as total FROM villas');
-    const [[{ occupied }]] = await pool.query("SELECT COUNT(*) as occupied FROM villas WHERE status = 'occupied'");
-    const [[{ available }]] = await pool.query("SELECT COUNT(*) as available FROM villas WHERE status = 'available'");
-    const [[{ construction }]] = await pool.query("SELECT COUNT(*) as construction FROM villas WHERE status = 'construction'");
-    const [[{ sold }]] = await pool.query("SELECT COUNT(*) as sold FROM villas WHERE status = 'sold'");
+    const [rows] = await pool.query(`
+      SELECT 
+        COUNT(*) as total,
+        SUM(CASE WHEN status = 'occupied' THEN 1 ELSE 0 END) as occupied,
+        SUM(CASE WHEN status = 'available' THEN 1 ELSE 0 END) as available,
+        SUM(CASE WHEN status = 'construction' THEN 1 ELSE 0 END) as construction,
+        SUM(CASE WHEN status = 'sold' THEN 1 ELSE 0 END) as sold
+      FROM villas
+    `);
+    const stats = rows[0] || { total: 0, occupied: 0, available: 0, construction: 0, sold: 0 };
 
     // Street-wise counts
     const [streetStats] = await pool.query(`
@@ -266,11 +271,11 @@ export const getVillaStats = async (req, res) => {
     `);
 
     res.json({
-      total,
-      occupied,
-      available,
-      construction,
-      sold,
+      total: Number(stats.total || 0),
+      occupied: Number(stats.occupied || 0),
+      available: Number(stats.available || 0),
+      construction: Number(stats.construction || 0),
+      sold: Number(stats.sold || 0),
       streetStats,
     });
   } catch (error) {

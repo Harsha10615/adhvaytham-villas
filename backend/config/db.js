@@ -11,43 +11,54 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Support both individual environment variables and full Railway connection URLs (DATABASE_URL / MYSQL_URL)
-let dbHost = process.env.DB_HOST;
-let dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : undefined;
-let dbUser = process.env.DB_USER;
-let dbPassword = process.env.DB_PASSWORD;
-let dbName = process.env.DB_NAME;
+// Requirement 5: Automatically detect whether the application is running Locally vs On Railway
+const isRailway = Boolean(
+  Object.keys(process.env).some(key => key.startsWith('RAILWAY_')) ||
+  process.env.MYSQLHOST ||
+  process.env.MYSQL_URL ||
+  process.env.DATABASE_URL ||
+  process.env.NODE_ENV === 'production'
+);
 
-const connectionUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || (dbHost && dbHost.startsWith('mysql://') ? dbHost : null);
-if (connectionUrl) {
-  try {
-    const parsed = new URL(connectionUrl);
-    dbHost = parsed.hostname || dbHost;
-    dbPort = parsed.port ? parseInt(parsed.port, 10) : dbPort;
-    dbUser = parsed.username || dbUser;
-    dbPassword = parsed.password ? decodeURIComponent(parsed.password) : dbPassword;
-    dbName = parsed.pathname ? parsed.pathname.replace(/^\//, '') : dbName;
-  } catch (e) {
-    console.warn('Note: Could not parse database URL string, using individual DB_* variables.');
+let dbHost, dbPort, dbUser, dbPassword, dbName;
+
+if (isRailway) {
+  // Requirement 5 & 6: Railway Deployment. Read MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQL_URL, DATABASE_URL. Never use localhost.
+  const connectionUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
+  if (connectionUrl) {
+    try {
+      const parsed = new URL(connectionUrl);
+      dbHost = parsed.hostname;
+      dbPort = parsed.port ? parseInt(parsed.port, 10) : 3306;
+      dbUser = parsed.username;
+      dbPassword = parsed.password ? decodeURIComponent(parsed.password) : undefined;
+      dbName = parsed.pathname ? parsed.pathname.replace(/^\//, '') : undefined;
+    } catch (e) {
+      console.warn('Note: Could not parse database URL string, using individual Railway environment variables.');
+    }
   }
-}
 
-// Ensure localhost/3306/root defaults are kept ONLY for local development and removed from production configuration
-if (isProduction) {
+  dbHost = dbHost || process.env.MYSQLHOST;
+  dbPort = dbPort || (process.env.MYSQLPORT ? parseInt(process.env.MYSQLPORT, 10) : 3306);
+  dbUser = dbUser || process.env.MYSQLUSER;
+  dbPassword = dbPassword !== undefined ? dbPassword : process.env.MYSQLPASSWORD;
+  dbName = dbName || process.env.MYSQLDATABASE;
+
   if (!dbHost || dbHost === 'localhost' || dbHost === '127.0.0.1') {
-    throw new Error('FATAL: Database configuration error. Never use localhost when NODE_ENV=production. Please set DB_HOST or DATABASE_URL/MYSQL_URL.');
+    throw new Error('FATAL: Detected Railway deployment but database host is set to localhost or missing. You must connect to Railway MySQL.');
   }
 } else {
-  dbHost = dbHost || 'localhost';
-  dbPort = dbPort !== undefined ? dbPort : 3306;
-  dbUser = dbUser || 'root';
+  // Requirement 4: Local Development. Read DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME.
+  dbHost = process.env.DB_HOST || 'localhost';
+  dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306;
+  dbUser = process.env.DB_USER || 'root';
+  dbPassword = process.env.DB_PASSWORD;
+  dbName = process.env.DB_NAME || 'adhvaytham_villas';
 }
 
-// Determine if connecting to remote Railway cloud host
 const isRemoteHost = Boolean(dbHost && !['localhost', '127.0.0.1'].includes(dbHost));
-
-// Railway and Render production require SSL connections for secure cloud communication
-const useSsl = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1' || (isRemoteHost && process.env.DB_SSL !== 'false' && process.env.DB_SSL !== '0');
+const isInternalRailway = Boolean(dbHost && dbHost.includes('.internal'));
+const useSsl = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1' || (isRemoteHost && !isInternalRailway && process.env.DB_SSL !== 'false' && process.env.DB_SSL !== '0');
 const sslConfig = useSsl ? { rejectUnauthorized: false } : undefined;
 
 const poolConfig = {
@@ -64,9 +75,9 @@ const poolConfig = {
   ssl: sslConfig,
 };
 
-// Setup pool without database name for local development DB creation (only in non-production local development)
+// Setup pool without database name for local development DB creation (only when running locally)
 let setupPool = null;
-if (!isProduction && !isRemoteHost) {
+if (!isRailway && !isRemoteHost) {
   const setupConfig = { ...poolConfig };
   delete setupConfig.database;
   setupPool = mysql.createPool(setupConfig);
@@ -78,14 +89,15 @@ export const pool = mysql.createPool(poolConfig);
 export const initDb = async () => {
   try {
     if (!dbName) {
-      throw new Error('DB_NAME environment variable must be provided.');
+      throw new Error('MYSQLDATABASE or DB_NAME environment variable must be provided.');
     }
 
     const displayPort = dbPort || 3306;
+    console.log(`[Environment Detection] Mode: ${isRailway ? 'Railway Cloud Deployment' : 'Local Development'}`);
     console.log(`[MySQL Config] Target Host: ${dbHost}:${displayPort} | Database: ${dbName} | SSL: ${useSsl ? 'Enabled' : 'Disabled'}`);
 
-    // 1. Only attempt CREATE DATABASE if running locally in non-production mode. Railway managed cloud instances pre-provision the schema.
-    if (!isProduction && !isRemoteHost && setupPool) {
+    // 1. Only attempt CREATE DATABASE if running locally. Railway managed cloud instances pre-provision the schema.
+    if (!isRailway && !isRemoteHost && setupPool) {
       try {
         const setupConn = await setupPool.getConnection();
         await setupConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
@@ -95,7 +107,7 @@ export const initDb = async () => {
         console.log(`Note: Skipping local database creation: ${err.message}`);
       }
     } else {
-      console.log('Connecting to managed cloud MySQL instance (skipping schema creation step)...');
+      console.log('Connecting to Railway MySQL instance (skipping local database creation)...');
     }
 
     // 2. Connect directly to target database pool and ensure tables exist
@@ -195,7 +207,21 @@ export const initDb = async () => {
     connection.release();
     console.log('All MySQL tables initialized and ready.');
   } catch (error) {
-    console.error('MySQL Initialization Error:', error.message);
+    console.error('\n=================================================================');
+    console.error('[DATABASE CONNECTION FAILURE] Could not connect to MySQL database!');
+    console.error(`Error Message: ${error.message}`);
+    if (error.code) console.error(`Error Code: ${error.code}`);
+    console.error('\nTroubleshooting Tips:');
+    if (isRailway) {
+      console.error(' 1. Verify that your Railway MySQL service is running and attached to this service.');
+      console.error(' 2. Check that MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, and MYSQLDATABASE variables exist in Railway.');
+      console.error(' 3. Ensure you are connecting to the correct host (mysql.railway.internal or proxy domain).');
+    } else {
+      console.error(' 1. Ensure your local MySQL server (XAMPP/WAMP/MySQL Workbench) is actively running.');
+      console.error(` 2. Verify that DB_HOST (${dbHost}), DB_PORT (${dbPort}), DB_USER (${dbUser}), and DB_PASSWORD are correct in backend/.env.`);
+      console.error(` 3. Check if the database '${dbName}' exists and user credentials are valid.`);
+    }
+    console.error('=================================================================\n');
   }
 };
 
