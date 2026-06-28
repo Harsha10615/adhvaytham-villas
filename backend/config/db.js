@@ -9,34 +9,53 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-// Create a connection pool without a specific database to check/create the database
+// Determine SSL configuration required by Railway / remote MySQL databases
+const isRemoteHost = process.env.DB_HOST && !['localhost', '127.0.0.1'].includes(process.env.DB_HOST);
+const sslConfig = (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' || isRemoteHost)
+  ? { rejectUnauthorized: false }
+  : undefined;
+
+// Create a connection pool without a specific database to check/create the database (for local dev)
 const setupPool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'root',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
   waitForConnections: true,
   connectionLimit: 10,
+  connectTimeout: 20000,
+  ssl: sslConfig,
 });
 
-// Create the main connection pool using the database
+// Create the main connection pool using the environment variables
 export const pool = mysql.createPool({
-  host: process.env.DB_HOST || 'localhost',
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || 'root',
-  database: process.env.DB_NAME || 'adhvaytham_villas',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
+  connectTimeout: 20000,
+  ssl: sslConfig,
 });
 
 export const initDb = async () => {
   try {
-    const dbName = process.env.DB_NAME || 'adhvaytham_villas';
+    const dbName = process.env.DB_NAME;
+    if (!dbName) {
+      throw new Error('DB_NAME environment variable must be provided.');
+    }
 
-    // 1. Create database if it doesn't exist
-    const setupConn = await setupPool.getConnection();
-    await setupConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
-    setupConn.release();
-    console.log(`Database '${dbName}' ensured.`);
+    // 1. Attempt to create database if permitted (skips gracefully on managed cloud databases like Railway)
+    try {
+      const setupConn = await setupPool.getConnection();
+      await setupConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+      setupConn.release();
+      console.log(`Database '${dbName}' ensured.`);
+    } catch (err) {
+      console.log(`Note: Skipping CREATE DATABASE (managed Railway cloud instance): ${err.message}`);
+    }
 
     // 2. Connect to the specific database pool and create tables
     const connection = await pool.getConnection();
