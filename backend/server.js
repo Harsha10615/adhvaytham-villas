@@ -61,6 +61,20 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Server running in ${process.env.NODE_ENV || 'development'} mode on port ${PORT}`);
+});
+
+server.on('error', (err) => {
+  if (err.code === 'EADDRINUSE') {
+    console.error(`\n=================================================================`);
+    console.error(`[PORT CONFLICT ERROR] Port ${PORT} is already in use!`);
+    console.error(`Another instance of the backend server is already running in your terminal.`);
+    console.error(`Please close your older terminal tabs running 'npm run dev' or press Ctrl+C.`);
+    console.error(`=================================================================\n`);
+    process.exit(1);
+  } else {
+    console.error('Server Initialization Error:', err);
+    process.exit(1);
+  }
 });
