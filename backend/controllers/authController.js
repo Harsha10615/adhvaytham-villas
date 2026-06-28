@@ -14,7 +14,7 @@ const generateToken = (id) => {
 // @access  Public
 export const registerUser = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, mobile, phone } = req.body;
 
     if (!name || !email || !password) {
       return res.status(400).json({ message: 'Please provide all fields' });
@@ -30,16 +30,27 @@ export const registerUser = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
-    const [result] = await pool.query(
-      'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
-      [name, email, hashedPassword, 'user']
-    );
+    // Ensure phone column exists or insert gracefully
+    const userPhone = mobile || phone || null;
+    let result;
+    try {
+      [result] = await pool.query(
+        'INSERT INTO users (name, email, password, phone, role) VALUES (?, ?, ?, ?, ?)',
+        [name, email, hashedPassword, userPhone, 'user']
+      );
+    } catch (colErr) {
+      // Fallback if phone column hasn't been added yet
+      [result] = await pool.query(
+        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+        [name, email, hashedPassword, 'user']
+      );
+    }
 
     res.status(201).json({
       _id: result.insertId,
       name,
       email,
+      phone: userPhone,
       role: 'user',
       token: generateToken(result.insertId),
     });
@@ -55,7 +66,7 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    const [rows] = await pool.query('SELECT * FROM users WHERE email = ? AND role = "user"', [email]);
+    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
     const user = rows[0];
 
     if (user && (await bcrypt.compare(password, user.password))) {

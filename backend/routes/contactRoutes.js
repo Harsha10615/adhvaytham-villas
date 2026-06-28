@@ -8,9 +8,9 @@ import { protect, admin } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Users must be logged in to submit a contact form
+// Contact inquiries are public for website visitors; fetching is protected for admin
 router.route('/')
-  .post(protect, createContact)
+  .post(createContact)
   .get(protect, admin, getContacts);
 
 router.route('/:id')
