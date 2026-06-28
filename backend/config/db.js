@@ -12,7 +12,11 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 const isProduction = process.env.NODE_ENV === 'production';
 
 // Automatically detect whether the application is running Locally vs On Railway
-const isRailway = Boolean(process.env.MYSQL_URL || process.env.DATABASE_URL);
+const isRailway = Boolean(
+  process.env.MYSQL_URL ||
+  process.env.DATABASE_URL ||
+  (process.env.MYSQLHOST && process.env.MYSQLHOST !== 'localhost' && process.env.MYSQLHOST !== '127.0.0.1')
+);
 
 let dbHost, dbPort, dbUser, dbPassword, dbName;
 
@@ -95,7 +99,8 @@ export const initDb = async () => {
 
     const displayPort = dbPort || 3306;
     console.log(`[Environment Detection] Mode: ${isRailway ? 'Railway Cloud Deployment' : 'Local Development'}`);
-    console.log(`[MySQL Config] Target Host: ${dbHost}:${displayPort} | Database: ${dbName} | SSL: ${useSsl ? 'Enabled' : 'Disabled'}`);
+    console.log(`[MySQL Config] Target Host: ${dbHost}:${displayPort}`);
+    console.log(`Database: ${dbName}`);
 
     // 1. Only attempt CREATE DATABASE if running locally. Railway managed cloud instances pre-provision the schema.
     if (!isRailway && !isRemoteHost && setupPool) {
@@ -107,8 +112,6 @@ export const initDb = async () => {
       } catch (err) {
         console.log(`Note: Skipping local database creation: ${err.message}`);
       }
-    } else {
-      console.log('Connecting to Railway MySQL instance (skipping local database creation)...');
     }
 
     // 2. Connect directly to target database pool and ensure tables exist
