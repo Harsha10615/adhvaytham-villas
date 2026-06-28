@@ -9,17 +9,40 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-// Determine SSL configuration required by Railway / remote MySQL databases
-const isRemoteHost = process.env.DB_HOST && !['localhost', '127.0.0.1'].includes(process.env.DB_HOST);
+// Support both individual environment variables and full Railway connection URLs (DATABASE_URL / MYSQL_URL)
+let dbHost = process.env.DB_HOST;
+let dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306;
+let dbUser = process.env.DB_USER;
+let dbPassword = process.env.DB_PASSWORD;
+let dbName = process.env.DB_NAME;
+
+const connectionUrl = process.env.DATABASE_URL || process.env.MYSQL_URL || (dbHost && dbHost.startsWith('mysql://') ? dbHost : null);
+if (connectionUrl) {
+  try {
+    const parsed = new URL(connectionUrl);
+    dbHost = parsed.hostname;
+    dbPort = parsed.port ? parseInt(parsed.port, 10) : 3306;
+    dbUser = parsed.username || dbUser;
+    dbPassword = decodeURIComponent(parsed.password) || dbPassword;
+    dbName = parsed.pathname ? parsed.pathname.replace(/^\//, '') : dbName;
+  } catch (e) {
+    console.warn('Note: Could not parse database URL string, using individual DB_* variables.');
+  }
+}
+
+// Determine if connecting to remote Railway cloud host
+const isRemoteHost = dbHost && !['localhost', '127.0.0.1'].includes(dbHost);
+
+// Railway and Render production require SSL connections for secure cloud communication
 const useSsl = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1' || (isRemoteHost && process.env.DB_SSL !== 'false' && process.env.DB_SSL !== '0');
 const sslConfig = useSsl ? { rejectUnauthorized: false } : undefined;
 
 const poolConfig = {
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
+  host: dbHost,
+  port: dbPort,
+  user: dbUser,
+  password: dbPassword,
+  database: dbName,
   waitForConnections: true,
   connectionLimit: 10,
   connectTimeout: 30000,
@@ -28,33 +51,39 @@ const poolConfig = {
   ssl: sslConfig,
 };
 
-// Create setup pool (without database name) for initial DB creation during local dev
+// Setup pool without database name for local development DB creation
 const setupConfig = { ...poolConfig };
 delete setupConfig.database;
 const setupPool = mysql.createPool(setupConfig);
 
-// Create the main connection pool using the environment variables
+// Main pool connected directly to the target database
 export const pool = mysql.createPool(poolConfig);
 
 export const initDb = async () => {
   try {
-    const dbName = process.env.DB_NAME;
     if (!dbName) {
       throw new Error('DB_NAME environment variable must be provided.');
     }
 
-    // 1. Attempt to create database if permitted (skips gracefully on managed cloud databases like Railway)
-    try {
-      const setupConn = await setupPool.getConnection();
-      await setupConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
-      setupConn.release();
-      console.log(`Database '${dbName}' ensured.`);
-    } catch (err) {
-      console.log(`Note: Skipping CREATE DATABASE (managed Railway cloud instance): ${err.message}`);
+    console.log(`[MySQL Config] Target Host: ${dbHost}:${dbPort} | Database: ${dbName} | SSL: ${useSsl ? 'Enabled' : 'Disabled'}`);
+
+    // 1. Only attempt CREATE DATABASE if running locally. Railway managed cloud instances pre-provision the database schema.
+    if (!isRemoteHost) {
+      try {
+        const setupConn = await setupPool.getConnection();
+        await setupConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbName}\``);
+        setupConn.release();
+        console.log(`Local database '${dbName}' ensured.`);
+      } catch (err) {
+        console.log(`Note: Skipping local database creation: ${err.message}`);
+      }
+    } else {
+      console.log('Connecting to managed Railway MySQL instance (skipping schema creation step)...');
     }
 
-    // 2. Connect to the specific database pool and create tables
+    // 2. Connect directly to target database pool and ensure tables exist
     const connection = await pool.getConnection();
+    console.log('Successfully connected to MySQL database!');
 
     // Users Table
     await connection.query(`
