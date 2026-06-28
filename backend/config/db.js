@@ -11,24 +11,10 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Determine SSL configuration required by Railway / remote MySQL databases
 const isRemoteHost = process.env.DB_HOST && !['localhost', '127.0.0.1'].includes(process.env.DB_HOST);
-const sslConfig = (process.env.NODE_ENV === 'production' || process.env.DB_SSL === 'true' || isRemoteHost)
-  ? { rejectUnauthorized: false }
-  : undefined;
+const useSsl = process.env.DB_SSL === 'true' || process.env.DB_SSL === '1' || (isRemoteHost && process.env.DB_SSL !== 'false' && process.env.DB_SSL !== '0');
+const sslConfig = useSsl ? { rejectUnauthorized: false } : undefined;
 
-// Create a connection pool without a specific database to check/create the database (for local dev)
-const setupPool = mysql.createPool({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  waitForConnections: true,
-  connectionLimit: 10,
-  connectTimeout: 20000,
-  ssl: sslConfig,
-});
-
-// Create the main connection pool using the environment variables
-export const pool = mysql.createPool({
+const poolConfig = {
   host: process.env.DB_HOST,
   port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
   user: process.env.DB_USER,
@@ -36,9 +22,19 @@ export const pool = mysql.createPool({
   database: process.env.DB_NAME,
   waitForConnections: true,
   connectionLimit: 10,
-  connectTimeout: 20000,
+  connectTimeout: 30000,
+  enableKeepAlive: true,
+  keepAliveInitialDelay: 10000,
   ssl: sslConfig,
-});
+};
+
+// Create setup pool (without database name) for initial DB creation during local dev
+const setupConfig = { ...poolConfig };
+delete setupConfig.database;
+const setupPool = mysql.createPool(setupConfig);
+
+// Create the main connection pool using the environment variables
+export const pool = mysql.createPool(poolConfig);
 
 export const initDb = async () => {
   try {
