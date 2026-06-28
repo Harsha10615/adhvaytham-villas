@@ -1,23 +1,43 @@
 import dotenv from 'dotenv';
 import bcrypt from 'bcryptjs';
-import pool, { initDb } from './config/db.js';
+import pool, { initDb, dbMetadata } from './config/db.js';
 
 dotenv.config();
 
 const runSeeder = async () => {
   try {
-    // Ensure tables exist before we start clearing them
+    // Ensure tables exist before we start clearing/seeding
     await initDb();
-    
-    // Clear tables
-    await pool.query('SET FOREIGN_KEY_CHECKS = 0');
-    await pool.query('TRUNCATE TABLE users');
-    await pool.query('TRUNCATE TABLE villas');
-    await pool.query('TRUNCATE TABLE bookings');
-    await pool.query('TRUNCATE TABLE contacts');
-    await pool.query('SET FOREIGN_KEY_CHECKS = 1');
 
-    console.log('MySQL Tables cleared.');
+    console.log('\n================ ENVIRONMENT DETECTED ================');
+    console.log(`Environment Detection: ${dbMetadata.isRailway ? 'Railway' : 'Local'}`);
+    console.log(`Connected Database Host: ${dbMetadata.host}:${dbMetadata.port}`);
+    console.log(`Database Name: ${dbMetadata.database}`);
+    console.log('======================================================\n');
+
+    // Check if villas table already contains data
+    const [villasCountResult] = await pool.query('SELECT COUNT(*) as count FROM villas');
+    const villasExist = villasCountResult[0].count > 0;
+
+    if (villasExist) {
+      console.log(`Villas table contains ${villasCountResult[0].count} records. Clearing data before inserting new data...`);
+      // Clear tables
+      await pool.query('SET FOREIGN_KEY_CHECKS = 0');
+      await pool.query('TRUNCATE TABLE users');
+      await pool.query('TRUNCATE TABLE villas');
+      await pool.query('TRUNCATE TABLE bookings');
+      await pool.query('TRUNCATE TABLE contacts');
+      await pool.query('SET FOREIGN_KEY_CHECKS = 1');
+      console.log('MySQL Tables cleared.');
+    } else {
+      console.log('Villas table is empty. Skipping clear step.');
+      // Prevent duplicate email entry for the admin user if users table has it already
+      const [adminExistsResult] = await pool.query('SELECT COUNT(*) as count FROM users WHERE email = ?', ['harshapothireddy9381@gmail.com']);
+      if (adminExistsResult[0].count > 0) {
+        console.log('Admin user already exists. Removing the existing user to avoid duplicate email constraint...');
+        await pool.query('DELETE FROM users WHERE email = ?', ['harshapothireddy9381@gmail.com']);
+      }
+    }
 
     // 1. Seed Admin User (using users table)
     const salt = await bcrypt.genSalt(10);
@@ -109,7 +129,7 @@ const runSeeder = async () => {
         [villaValues]
       );
     }
-    console.log(`120 Villas successfully seeded.`);
+    console.log(`Number of villas inserted: ${villaValues.length}`);
 
     // 3. Seed Mock Bookings
     const mockBookings = [

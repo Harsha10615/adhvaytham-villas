@@ -11,19 +11,13 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 
 const isProduction = process.env.NODE_ENV === 'production';
 
-// Requirement 5: Automatically detect whether the application is running Locally vs On Railway
-const isRailway = Boolean(
-  Object.keys(process.env).some(key => key.startsWith('RAILWAY_')) ||
-  process.env.MYSQLHOST ||
-  process.env.MYSQL_URL ||
-  process.env.DATABASE_URL ||
-  process.env.NODE_ENV === 'production'
-);
+// Automatically detect whether the application is running Locally vs On Railway
+const isRailway = Boolean(process.env.MYSQL_URL || process.env.DATABASE_URL);
 
 let dbHost, dbPort, dbUser, dbPassword, dbName;
 
 if (isRailway) {
-  // Requirement 5 & 6: Railway Deployment. Read MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQL_URL, DATABASE_URL. Never use localhost.
+  // Railway Deployment. Read MYSQLHOST, MYSQLPORT, MYSQLUSER, MYSQLPASSWORD, MYSQLDATABASE, MYSQL_URL, DATABASE_URL. Never use localhost.
   const connectionUrl = process.env.MYSQL_URL || process.env.DATABASE_URL;
   if (connectionUrl) {
     try {
@@ -48,13 +42,20 @@ if (isRailway) {
     throw new Error('FATAL: Detected Railway deployment but database host is set to localhost or missing. You must connect to Railway MySQL.');
   }
 } else {
-  // Requirement 4: Local Development. Read DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME.
+  // Local Development. Read DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME.
   dbHost = process.env.DB_HOST || 'localhost';
   dbPort = process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306;
   dbUser = process.env.DB_USER || 'root';
   dbPassword = process.env.DB_PASSWORD;
   dbName = process.env.DB_NAME || 'adhvaytham_villas';
 }
+
+export const dbMetadata = {
+  isRailway,
+  host: dbHost,
+  port: dbPort,
+  database: dbName,
+};
 
 const isRemoteHost = Boolean(dbHost && !['localhost', '127.0.0.1'].includes(dbHost));
 const isInternalRailway = Boolean(dbHost && dbHost.includes('.internal'));
