@@ -7,22 +7,27 @@ export const createContact = async (req, res) => {
   try {
     const { name, email, phone, subject, message } = req.body;
 
+    if (!name || !email || !message) {
+      return res.status(400).json({ message: 'Please provide name, email, and message.' });
+    }
+
     const [result] = await pool.query(
       'INSERT INTO contacts (name, email, phone, subject, message) VALUES (?, ?, ?, ?, ?)',
-      [name, email, phone || null, subject || null, message]
+      [name || null, email || null, phone || null, subject || null, message || null]
     );
 
     res.status(201).json({
       _id: result.insertId,
       name,
       email,
-      phone,
-      subject,
+      phone: phone || null,
+      subject: subject || null,
       message,
       status: 'New'
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Contact creation error:', error);
+    res.status(500).json({ message: error.message || 'Failed to submit contact message' });
   }
 };
 

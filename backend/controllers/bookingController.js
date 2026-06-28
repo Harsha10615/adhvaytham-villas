@@ -7,12 +7,25 @@ export const createBooking = async (req, res) => {
   try {
     const { name, email, phone, date, villaNumber, message } = req.body;
 
-    // Convert ISO date string to MySQL datetime
-    const mysqlDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+    if (!name || !email || !phone) {
+      return res.status(400).json({ message: 'Please provide name, email, and phone number.' });
+    }
+
+    // Safely convert ISO date string to MySQL datetime without crashing
+    let mysqlDate;
+    try {
+      if (date && !isNaN(new Date(date).getTime())) {
+        mysqlDate = new Date(date).toISOString().slice(0, 19).replace('T', ' ');
+      } else {
+        mysqlDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+      }
+    } catch (e) {
+      mysqlDate = new Date().toISOString().slice(0, 19).replace('T', ' ');
+    }
 
     const [result] = await pool.query(
       'INSERT INTO bookings (customer_name, email, phone, booking_date, villa_id, message) VALUES (?, ?, ?, ?, ?, ?)',
-      [name, email, phone, mysqlDate, villaNumber, message || null]
+      [name || null, email || null, phone || null, mysqlDate, villaNumber || null, message || null]
     );
 
     res.status(201).json({
@@ -20,13 +33,14 @@ export const createBooking = async (req, res) => {
       name,
       email,
       phone,
-      date,
-      villaNumber,
-      message,
+      date: mysqlDate,
+      villaNumber: villaNumber || null,
+      message: message || null,
       status: 'Pending'
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Booking creation error:', error);
+    res.status(500).json({ message: error.message || 'Failed to create booking' });
   }
 };
 
