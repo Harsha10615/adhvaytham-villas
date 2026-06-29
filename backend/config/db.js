@@ -124,11 +124,23 @@ export const initDb = async () => {
         id INT AUTO_INCREMENT PRIMARY KEY,
         name VARCHAR(100),
         email VARCHAR(100) UNIQUE,
+        phone VARCHAR(20),
         password VARCHAR(255) NOT NULL,
         role VARCHAR(50) DEFAULT 'admin',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )
     `);
+
+    // Ensure phone column exists in case the table was created earlier without it
+    try {
+      const [columns] = await connection.query(`SHOW COLUMNS FROM users LIKE 'phone'`);
+      if (columns.length === 0) {
+        await connection.query(`ALTER TABLE users ADD COLUMN phone VARCHAR(20) AFTER email`);
+        console.log("Added 'phone' column to 'users' table.");
+      }
+    } catch (err) {
+      console.warn("Failed to check/add 'phone' column to 'users' table:", err.message);
+    }
 
     // Villas Table
     await connection.query(`

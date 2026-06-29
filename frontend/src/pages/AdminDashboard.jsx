@@ -13,6 +13,16 @@ const AdminDashboard = () => {
   const [stats, setStats] = useState({ total: 0, occupied: 0, available: 0, construction: 0, sold: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem('adminSidebarCollapsed') === 'true');
+  const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed(prev => {
+      const nextVal = !prev;
+      localStorage.setItem('adminSidebarCollapsed', String(nextVal));
+      return nextVal;
+    });
+  };
 
   // Add/Edit villa form states
   const [isEditing, setIsEditing] = useState(false);
@@ -35,7 +45,7 @@ const AdminDashboard = () => {
   const navigate = useNavigate();
 
   // Load dashboard data
-  const loadData = async () => {
+  const loadData = async (isSilent = false) => {
     const token = localStorage.getItem('adminToken');
     if (!token) {
       navigate('/admin/login');
@@ -47,7 +57,10 @@ const AdminDashboard = () => {
     };
 
     try {
-      setLoading(true);
+      if (!isSilent) {
+        setLoading(true);
+      }
+      setError('');
       const [villasRes, bookingsRes, contactsRes, statsRes, usersRes, siteVisitsRes] = await Promise.all([
         axios.get('/api/villas'),
         axios.get('/api/bookings', config),
@@ -63,21 +76,40 @@ const AdminDashboard = () => {
       setStats(statsRes.data);
       setUsers(usersRes.data);
       setSiteVisits(siteVisitsRes.data);
-      setLoading(false);
+      if (!isSilent) {
+        setLoading(false);
+      }
     } catch (err) {
       console.error(err);
       if (err.response?.status === 401) {
         localStorage.removeItem('adminToken');
         navigate('/admin/login');
       } else {
-        setError('Failed to retrieve dashboard records.');
+        setError('Failed to retrieve dashboard records. API server may be offline or unavailable.');
       }
-      setLoading(false);
+      if (!isSilent) {
+        setLoading(false);
+      }
     }
   };
 
   useEffect(() => {
-    loadData();
+    loadData(false);
+
+    // Refresh every 5 seconds to automatically update the registered users list and other stats
+    const interval = setInterval(() => {
+      loadData(true);
+    }, 5000);
+
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   const { logout } = useAuth();
@@ -227,44 +259,97 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+    setIsEditing(false);
+    setIsAdding(false);
+    if (isMobile) {
+      setSidebarCollapsed(true);
+      localStorage.setItem('adminSidebarCollapsed', 'true');
+    }
+  };
+
+  const handleOpenAddVilla = () => {
+    openAddVilla();
+    if (isMobile) {
+      setSidebarCollapsed(true);
+      localStorage.setItem('adminSidebarCollapsed', 'true');
+    }
+  };
+
   return (
-    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#0d1216', color: 'white', overflow: 'hidden' }}>
+    <div style={{ display: 'flex', height: '100vh', backgroundColor: '#0d1216', color: 'white', overflow: 'hidden', position: 'relative' }}>
       
+      {/* Mobile Sidebar Backdrop Overlay */}
+      {!sidebarCollapsed && isMobile && (
+        <div 
+          onClick={toggleSidebar}
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.6)',
+            backdropFilter: 'blur(3px)',
+            zIndex: 999,
+            transition: 'opacity 0.3s ease'
+          }}
+        />
+      )}
+
       {/* LEFT SIDEBAR NAVIGATION */}
       <div style={{
-        width: '280px',
+        width: isMobile ? '280px' : (sidebarCollapsed ? '0px' : '280px'),
+        minWidth: isMobile ? '280px' : (sidebarCollapsed ? '0px' : '280px'),
         backgroundColor: '#0f172a',
         display: 'flex',
         flexDirection: 'column',
         boxShadow: '4px 0 20px rgba(0,0,0,0.5)',
-        zIndex: 10,
-        overflowY: 'auto'
+        zIndex: isMobile ? 1000 : 10,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        position: isMobile ? 'absolute' : 'relative',
+        height: '100%',
+        left: 0,
+        transform: isMobile ? (sidebarCollapsed ? 'translateX(-100%)' : 'translateX(0)') : 'none',
+        transition: 'all 0.3s ease',
       }}>
-        <div style={{ padding: '30px', borderBottom: '1px solid #233140', marginBottom: '20px' }}>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#c9a66b', fontSize: '24px', margin: 0, letterSpacing: '1px' }}>Adhvaytham</h2>
-          <p style={{ color: '#a0aec0', fontSize: '12px', marginTop: '5px', letterSpacing: '2px', textTransform: 'uppercase' }}>Admin Portal</p>
+        <div style={{ padding: '30px', borderBottom: '1px solid #233140', marginBottom: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", color: '#c9a66b', fontSize: '24px', margin: 0, letterSpacing: '1px' }}>Adhvaytham</h2>
+            <p style={{ color: '#a0aec0', fontSize: '12px', marginTop: '5px', letterSpacing: '2px', textTransform: 'uppercase' }}>Admin Portal</p>
+          </div>
+          {isMobile && (
+            <button 
+              onClick={toggleSidebar} 
+              style={{ background: 'none', border: 'none', color: '#a0aec0', fontSize: '20px', cursor: 'pointer', outline: 'none' }}
+            >
+              <i className="fas fa-times"></i>
+            </button>
+          )}
         </div>
 
         <nav style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '5px' }}>
           <div 
-            onClick={() => { setActiveTab('dashboard'); setIsEditing(false); setIsAdding(false); }}
-            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'dashboard' && !isAdding ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'dashboard' && !isAdding ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'dashboard' && !isAdding ? '#c9a66b' : 'white' }}
+            onClick={() => handleTabClick('dashboard')}
+            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'dashboard' && !isAdding && !isEditing ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'dashboard' && !isAdding && !isEditing ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'dashboard' && !isAdding && !isEditing ? '#c9a66b' : 'white' }}
           >
             <i className="fas fa-home" style={{ width: '20px', textAlign: 'center' }}></i>
             <span style={{ fontWeight: 500, fontSize: '15px' }}>Dashboard</span>
           </div>
 
           <div 
-            onClick={() => { setActiveTab('villas'); setIsEditing(false); setIsAdding(false); }}
-            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'villas' && !isAdding ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'villas' && !isAdding ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'villas' && !isAdding ? '#c9a66b' : 'white' }}
+            onClick={() => handleTabClick('villas')}
+            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'villas' && !isAdding && !isEditing ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'villas' && !isAdding && !isEditing ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'villas' && !isAdding && !isEditing ? '#c9a66b' : 'white' }}
           >
             <i className="fas fa-th-large" style={{ width: '20px', textAlign: 'center' }}></i>
             <span style={{ fontWeight: 500, fontSize: '15px' }}>Villas Grid</span>
           </div>
 
           <div 
-            onClick={() => { setActiveTab('bookings'); setIsEditing(false); setIsAdding(false); }}
-            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'bookings' && !isAdding ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'bookings' && !isAdding ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'bookings' && !isAdding ? '#c9a66b' : 'white' }}
+            onClick={() => handleTabClick('bookings')}
+            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'bookings' && !isAdding && !isEditing ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'bookings' && !isAdding && !isEditing ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'bookings' && !isAdding && !isEditing ? '#c9a66b' : 'white' }}
           >
             <i className="fas fa-calendar-check" style={{ width: '20px', textAlign: 'center' }}></i>
             <span style={{ fontWeight: 500, fontSize: '15px' }}>Villa Bookings</span>
@@ -272,8 +357,8 @@ const AdminDashboard = () => {
           </div>
 
           <div 
-            onClick={() => { setActiveTab('siteVisits'); setIsEditing(false); setIsAdding(false); }}
-            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'siteVisits' && !isAdding ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'siteVisits' && !isAdding ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'siteVisits' && !isAdding ? '#c9a66b' : 'white' }}
+            onClick={() => handleTabClick('siteVisits')}
+            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'siteVisits' && !isAdding && !isEditing ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'siteVisits' && !isAdding && !isEditing ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'siteVisits' && !isAdding && !isEditing ? '#c9a66b' : 'white' }}
           >
             <i className="fas fa-map-marked-alt" style={{ width: '20px', textAlign: 'center' }}></i>
             <span style={{ fontWeight: 500, fontSize: '15px' }}>Site Visit Bookings</span>
@@ -281,8 +366,8 @@ const AdminDashboard = () => {
           </div>
 
           <div 
-            onClick={() => { setActiveTab('contacts'); setIsEditing(false); setIsAdding(false); }}
-            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'contacts' && !isAdding ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'contacts' && !isAdding ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'contacts' && !isAdding ? '#c9a66b' : 'white' }}
+            onClick={() => handleTabClick('contacts')}
+            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'contacts' && !isAdding && !isEditing ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'contacts' && !isAdding && !isEditing ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'contacts' && !isAdding && !isEditing ? '#c9a66b' : 'white' }}
           >
             <i className="fas fa-envelope" style={{ width: '20px', textAlign: 'center' }}></i>
             <span style={{ fontWeight: 500, fontSize: '15px' }}>Contact Forms</span>
@@ -290,8 +375,8 @@ const AdminDashboard = () => {
           </div>
 
           <div 
-            onClick={() => { setActiveTab('users'); setIsEditing(false); setIsAdding(false); }}
-            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'users' && !isAdding ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'users' && !isAdding ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'users' && !isAdding ? '#c9a66b' : 'white' }}
+            onClick={() => handleTabClick('users')}
+            style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: activeTab === 'users' && !isAdding && !isEditing ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: activeTab === 'users' && !isAdding && !isEditing ? '4px solid #c9a66b' : '4px solid transparent', color: activeTab === 'users' && !isAdding && !isEditing ? '#c9a66b' : 'white' }}
           >
             <i className="fas fa-users" style={{ width: '20px', textAlign: 'center' }}></i>
             <span style={{ fontWeight: 500, fontSize: '15px' }}>Registered Users</span>
@@ -300,7 +385,7 @@ const AdminDashboard = () => {
           <div style={{ height: '1px', backgroundColor: '#233140', margin: '15px 0' }}></div>
 
           <div 
-            onClick={openAddVilla}
+            onClick={handleOpenAddVilla}
             style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', backgroundColor: isAdding ? 'rgba(201, 166, 107, 0.1)' : 'transparent', borderLeft: isAdding ? '4px solid #c9a66b' : '4px solid transparent', color: isAdding ? '#c9a66b' : 'white' }}
           >
             <i className="fas fa-plus-circle" style={{ width: '20px', textAlign: 'center' }}></i>
@@ -308,7 +393,7 @@ const AdminDashboard = () => {
           </div>
 
           <div 
-            onClick={() => navigate('/admin/website-preview')}
+            onClick={() => { navigate('/admin/website-preview'); if (isMobile) { setSidebarCollapsed(true); localStorage.setItem('adminSidebarCollapsed', 'true'); } }}
             style={{ padding: '15px 30px', display: 'flex', alignItems: 'center', gap: '15px', cursor: 'pointer', transition: 'all 0.3s', borderLeft: '4px solid transparent', color: 'white' }}
             onMouseOver={(e) => { e.currentTarget.style.color = '#c9a66b'; e.currentTarget.style.backgroundColor = 'rgba(201, 166, 107, 0.05)'; }}
             onMouseOut={(e) => { e.currentTarget.style.color = 'white'; e.currentTarget.style.backgroundColor = 'transparent'; }}
@@ -349,7 +434,63 @@ const AdminDashboard = () => {
       </div>
 
       {/* RIGHT CONTENT AREA */}
-      <div style={{ flex: 1, overflowY: 'auto', padding: '40px 50px', backgroundColor: '#0d1216' }}>
+      <div style={{ 
+        flex: 1, 
+        overflowY: 'auto', 
+        padding: isMobile ? '20px' : '40px 50px', 
+        backgroundColor: '#0d1216',
+        transition: 'all 0.3s ease',
+        position: 'relative'
+      }}>
+        
+        {/* Top Header Bar with Hamburger */}
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          gap: '20px', 
+          marginBottom: isMobile ? '25px' : '35px',
+          borderBottom: '1px solid #233140',
+          paddingBottom: '15px'
+        }}>
+          <button 
+            onClick={toggleSidebar}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#c9a66b',
+              fontSize: '22px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '10px',
+              borderRadius: '6px',
+              backgroundColor: 'rgba(201, 166, 107, 0.05)',
+              border: '1px solid rgba(201, 166, 107, 0.2)',
+              transition: 'all 0.2s',
+              outline: 'none'
+            }}
+            onMouseOver={(e) => { e.currentTarget.style.backgroundColor = 'rgba(201, 166, 107, 0.15)'; }}
+            onMouseOut={(e) => { e.currentTarget.style.backgroundColor = 'rgba(201, 166, 107, 0.05)'; }}
+          >
+            <i className="fas fa-bars"></i>
+          </button>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ color: '#a0aec0', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px' }}>Admin</span>
+            <span style={{ color: '#4a5568' }}>/</span>
+            <span style={{ color: '#c9a66b', fontSize: '13px', textTransform: 'uppercase', letterSpacing: '1px', fontWeight: 600 }}>
+              {isAdding ? 'Add New Villa' : 
+               isEditing ? `Editing Villa ${currentVilla?.villaNumber}` :
+               activeTab === 'dashboard' ? 'Dashboard Overview' : 
+               activeTab === 'villas' ? 'Villa Inventory' : 
+               activeTab === 'bookings' ? 'Site Visit Registrations' : 
+               activeTab === 'siteVisits' ? 'Site Visit Bookings' : 
+               activeTab === 'contacts' ? 'Contact Form Submissions' : 
+               activeTab === 'users' ? 'Registered Accounts' : activeTab}
+            </span>
+          </div>
+        </div>
         
         {loading ? (
           <div className="text-center" style={{ padding: '60px 0' }}>
@@ -815,7 +956,8 @@ const AdminDashboard = () => {
                           <th style={{ padding: '20px 16px' }}>User ID</th>
                           <th style={{ padding: '20px 16px' }}>Full Name</th>
                           <th style={{ padding: '20px 16px' }}>Email Address</th>
-                          <th style={{ padding: '20px 16px' }}>Account Role</th>
+                          <th style={{ padding: '20px 16px' }}>Mobile Number</th>
+                          <th style={{ padding: '20px 16px' }}>Role</th>
                           <th style={{ padding: '20px 16px' }}>Registration Date</th>
                         </tr>
                       </thead>
@@ -825,6 +967,7 @@ const AdminDashboard = () => {
                             <td style={{ padding: '16px', color: '#a0aec0' }}>#{u.id}</td>
                             <td style={{ padding: '16px', fontWeight: 600 }}>{u.name}</td>
                             <td style={{ padding: '16px' }}>{u.email}</td>
+                            <td style={{ padding: '16px' }}>{u.phone || '-'}</td>
                             <td style={{ padding: '16px' }}>
                               <span style={{ 
                                 padding: '4px 8px', 

@@ -7,7 +7,7 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import axios from 'axios';
 
 // Replace localhost API URL with VITE_API_URL for Railway backend deployment
-const rawApiUrl = import.meta.env.VITE_API_URL || '';
+const rawApiUrl = import.meta.env.VITE_API_URL || 'https://adhvaytham-villas.onrender.com';
 axios.defaults.baseURL = rawApiUrl.replace(/\/$/, '');
 
 // Ensure image upload paths resolve correctly when deployed across different Railway domains
