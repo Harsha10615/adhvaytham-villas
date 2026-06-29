@@ -177,3 +177,81 @@ export const loginAdmin = async (req, res) => {
     return res.status(500).json({ message: 'An unexpected server error occurred during admin login.' });
   }
 };
+
+// @desc    Auth user via Google & get token
+// @route   POST /api/auth/google-login
+// @access  Public
+export const googleLogin = async (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      return res.status(400).json({ message: 'No Google token provided.' });
+    }
+
+    let googleUser = null;
+
+    // 1. Try fetching from userinfo endpoint (if token is an access token)
+    try {
+      const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      if (response.ok) {
+        googleUser = await response.json();
+      }
+    } catch (err) {
+      logDev('Failed fetching userinfo as access token:', err.message);
+    }
+
+    // 2. If first attempt failed, try tokeninfo endpoint (if token is an ID token)
+    if (!googleUser) {
+      try {
+        const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
+        if (response.ok) {
+          googleUser = await response.json();
+        }
+      } catch (err) {
+        logDev('Failed verifying tokeninfo as id_token:', err.message);
+      }
+    }
+
+    if (!googleUser || !googleUser.email) {
+      return res.status(401).json({ message: 'Invalid or expired Google token.' });
+    }
+
+    const cleanEmail = normalizeEmail(googleUser.email);
+    const name = googleUser.name || googleUser.given_name || 'Google User';
+
+    logDev(`Google login successful for: ${cleanEmail}`);
+
+    // Check if user exists in the database
+    const [rows] = await pool.query('SELECT * FROM users WHERE email = ?', [cleanEmail]);
+    let user = rows && rows[0];
+
+    if (!user) {
+      logDev(`Creating new user in database for Google user: ${cleanEmail}`);
+      // Generate a secure random password to satisfy database constraints
+      const randomPassword = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+      const [insertResult] = await pool.query(
+        'INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)',
+        [name, cleanEmail, hashedPassword, 'user']
+      );
+
+      const [newRows] = await pool.query('SELECT * FROM users WHERE id = ?', [insertResult.insertId]);
+      user = newRows && newRows[0];
+    }
+
+    const localToken = generateToken(user.id);
+    return res.status(200).json(formatUserResponse(user, localToken));
+  } catch (error) {
+    console.error('[AUTH GOOGLE LOGIN ERROR]', error.message);
+    if (error.message && error.message.includes('SERVER_CONFIG_ERROR')) {
+      return res.status(500).json({ message: 'Server configuration error: JWT_SECRET variable is not configured.' });
+    }
+    return res.status(500).json({ message: 'An unexpected server error occurred during Google login.' });
+  }
+};
